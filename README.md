@@ -1,3 +1,57 @@
+### 2019.4.22
+
+- 给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。
+
+**例如**：
+给定二叉树: [3,9,20,null,null,15,7],
+
+```
+    3
+   / \
+  9  20
+    /  \
+   15   7
+```
+返回其层次遍历结果：
+```
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+```
+> 我的答案
+
+```js
+var levelOrder = function(root, arr = [], i = 0) {
+  if (root && (root.val || root.val === 0)) {
+    !arr[i] && (arr[i] = [])
+    arr[i].push(root.val)
+    i++
+    if (root.left) levelOrder(root.left, arr, i)
+    if (root.right) levelOrder(root.right, arr, i)
+  }
+  return arr
+}
+```
+
+> 优秀答案(其实还好)
+
+```js
+var levelOrder = function (root, list = [], level = 0) {
+    if (root == null) {
+        return [];
+    }
+    if (level + 1 > list.length) {
+        list.push([])
+    }
+    list[level].push(root.val);
+    levelOrder(root.left, list, level + 1)
+    levelOrder(root.right, list, level + 1)
+    return list
+};
+```
+
 ### 2019.4.19
 
 - 将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。

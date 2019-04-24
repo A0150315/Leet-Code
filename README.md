@@ -1,3 +1,55 @@
+### 2019.4.24
+
+- 你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
+
+- 给定一个代表每个房屋存放金额的非负整数数组，计算你在不触动警报装置的情况下，能够偷窃到的最高金额。
+
+**示例 1**：
+
+```
+输入: [1,2,3,1]
+输出: 4
+解释: 偷窃 1 号房屋 (金额 = 1) ，然后偷窃 3 号房屋 (金额 = 3)。
+     偷窃到的最高金额 = 1 + 3 = 4 。
+```
+
+**示例 2**：
+
+```
+输入: [2,7,9,3,1]
+输出: 12
+解释: 偷窃 1 号房屋 (金额 = 2), 偷窃 3 号房屋 (金额 = 9)，接着偷窃 5 号房屋 (金额 = 1)。
+     偷窃到的最高金额 = 2 + 9 + 1 = 12 。
+```
+
+> 我的答案
+
+```js
+...
+```
+
+> 优秀答案(其实还好)
+
+```js
+var rob = function(nums) {
+  if (!nums.length) {
+    return 0
+  }
+  if (nums.length === 1) {
+    return nums[0]
+  }
+  var pre = nums[0]
+  var curr = Math.max(nums[0], nums[1])
+  var temp
+  for (const [index, val] of nums.slice(2).entries()) {
+    temp = curr
+    curr = Math.max(val + pre, curr)
+    pre = temp
+  }
+  return curr
+}
+```
+
 ### 2019.4.22
 
 - 给定一个二叉树，返回其按层次遍历的节点值。 （即逐层地，从左到右访问所有节点）。
@@ -12,7 +64,9 @@
     /  \
    15   7
 ```
+
 返回其层次遍历结果：
+
 ```
 [
   [3],
@@ -20,6 +74,7 @@
   [15,7]
 ]
 ```
+
 > 我的答案
 
 ```js
@@ -38,18 +93,18 @@ var levelOrder = function(root, arr = [], i = 0) {
 > 优秀答案(其实还好)
 
 ```js
-var levelOrder = function (root, list = [], level = 0) {
-    if (root == null) {
-        return [];
-    }
-    if (level + 1 > list.length) {
-        list.push([])
-    }
-    list[level].push(root.val);
-    levelOrder(root.left, list, level + 1)
-    levelOrder(root.right, list, level + 1)
-    return list
-};
+var levelOrder = function(root, list = [], level = 0) {
+  if (root == null) {
+    return []
+  }
+  if (level + 1 > list.length) {
+    list.push([])
+  }
+  list[level].push(root.val)
+  levelOrder(root.left, list, level + 1)
+  levelOrder(root.right, list, level + 1)
+  return list
+}
 ```
 
 ### 2019.4.19

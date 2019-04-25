@@ -1,3 +1,147 @@
+### 2019.4.25
+
+- 罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
+
+```
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+```
+
+例如， 罗马数字 2 写做 II ，即为两个并列的 1。12 写做 XII ，即为 X + II 。 27 写做 XXVII, 即为 XX + V + II 。
+
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况
+
+- I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。
+- X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。
+- C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。
+
+给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
+**示例 1**：
+
+```
+输入: "III"
+输出: 3
+```
+
+**示例 2**：
+
+```
+输入: "IV"
+输出: 4
+```
+
+**示例 3**：
+
+```
+输入: "IX"
+输出: 9
+```
+
+**示例 4**：
+
+```
+输入: "LVIII"
+输出: 58
+解释: L = 50, V= 5, III = 3.
+```
+
+**示例 5**：
+
+```
+输入: "MCMXCIV"
+输出: 1994
+解释: M = 1000, CM = 900, XC = 90, IV = 4.
+```
+
+> 我的答案
+
+```js
+var romanToInt = function(s) {
+  const list = s.split('')
+  let sum = 0
+  let missIndex = -1
+  for (let [index, item] of list.entries()) {
+    if (index === missIndex) continue
+    switch (item) {
+      case 'I':
+        if (list[index + 1] === 'V') {
+          missIndex = index + 1
+          sum += 4
+        } else if (list[index + 1] === 'X') {
+          missIndex = index + 1
+          sum += 9
+        } else {
+          sum += 1
+        }
+        break
+      case 'X':
+        if (list[index + 1] === 'L') {
+          missIndex = index + 1
+          sum += 40
+        } else if (list[index + 1] === 'C') {
+          missIndex = index + 1
+          sum += 90
+        } else {
+          sum += 10
+        }
+        break
+      case 'C':
+        if (list[index + 1] === 'D') {
+          missIndex = index + 1
+          sum += 400
+        } else if (list[index + 1] === 'M') {
+          missIndex = index + 1
+          sum += 900
+        } else {
+          sum += 100
+        }
+        break
+      case 'V':
+        sum += 5
+        break
+      case 'L':
+        sum += 50
+        break
+      case 'D':
+        sum += 500
+        break
+      case 'M':
+        sum += 1000
+        break
+    }
+  }
+  return sum
+}
+```
+
+> 优秀答案
+
+```js
+var romanToInt = function(s) {
+    let array = {
+        'I': 1,
+        'V': 5,
+        'X': 10,
+        'L': 50,
+        'C': 100,
+        'D': 500,
+        'M': 1000
+    }
+    
+  var result = 0;
+  for(var i = 0; i < s.length; i++) {
+    result += array[s[i]] * (array[s[i]] < array[s[i+1]] ? -1 : 1)
+  }
+
+  return result;
+```
+
 ### 2019.4.24
 
 - 你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警。
@@ -28,7 +172,7 @@
 ...
 ```
 
-> 优秀答案(其实还好)
+> 优秀答案
 
 ```js
 var rob = function(nums) {

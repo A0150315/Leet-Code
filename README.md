@@ -1,3 +1,65 @@
+### 2019.4.26
+
+- 给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。
+
+在杨辉三角中，每个数是它左上方和右上方的数的和。
+
+**示例**：
+
+```
+输入: 5
+输出:
+[
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+]
+```
+
+> 我的答案
+
+```js
+var generate = function(numRows) {
+  const triangle = new Array(numRows).fill(null)
+
+  for (let index in triangle) {
+    triangle[index] = []
+    for (let i = 0; i <= index; i++) {
+      triangle[index][i] =
+        index < 2 || i === 0 || i == index
+          ? 1
+          : triangle[index - 1][i - 1] + triangle[index - 1][i]
+    }
+  }
+  return triangle
+}
+```
+
+> 优秀答案
+
+```js
+var generate = function(numRows) {
+    if(!numRows) {
+        return [];
+    }
+
+    var M = new Array(numRows).fill().map(x => [].fill([]));
+
+    M[0][0] = 1;
+    if (numRows > 1) {
+        for(var i = 1; i < numRows; i++) {
+            for(var j = 0; j <= i; j++) {
+                M[i][j] = (M[i-1][j-1] || 0) + (M[i-1][j] || 0);
+            }
+        }
+    }
+
+    return M;
+};
+```
+
 ### 2019.4.25
 
 - 罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。
@@ -1790,7 +1852,7 @@ let maxDepth = function(root) {
 ### 2019.2.18
 
 - 编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 char[] 的形式给出。不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。你可以假设数组中的所有字符都是 ASCII 码表中的可打印字符。
-  
+
 > 我的答案
 
 ```js

@@ -1,3 +1,49 @@
+### 2019.4.28
+
+- 给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
+
+**说明**：
+你的算法应该具有线性时间复杂度。 你可以不使用额外空间来实现吗？
+
+**示例 1**：
+
+```
+输入: [2,2,1]
+输出: 1
+```
+
+**示例 2**：
+
+```
+输入: [4,1,2,1,2]
+输出: 4
+```
+
+> 我的答案
+
+```js
+var singleNumber = function(nums) {
+  let sum = 0
+  for (const [index, item] of nums.entries()) {
+    if (nums.indexOf(item) === index) sum += item
+    else sum -= item
+  }
+  return sum
+}
+```
+
+> 优秀答案
+
+```js
+var singleNumber = function (nums) {
+    var res;
+    nums.forEach(function (v) {
+        res = res ^ v;
+    });
+    return res;
+};
+```
+
 ### 2019.4.26
 
 - 给定一个非负整数 numRows，生成杨辉三角的前 numRows 行。
@@ -43,23 +89,23 @@ var generate = function(numRows) {
 
 ```js
 var generate = function(numRows) {
-    if(!numRows) {
-        return [];
+  if (!numRows) {
+    return []
+  }
+
+  var M = new Array(numRows).fill().map(x => [].fill([]))
+
+  M[0][0] = 1
+  if (numRows > 1) {
+    for (var i = 1; i < numRows; i++) {
+      for (var j = 0; j <= i; j++) {
+        M[i][j] = (M[i - 1][j - 1] || 0) + (M[i - 1][j] || 0)
+      }
     }
+  }
 
-    var M = new Array(numRows).fill().map(x => [].fill([]));
-
-    M[0][0] = 1;
-    if (numRows > 1) {
-        for(var i = 1; i < numRows; i++) {
-            for(var j = 0; j <= i; j++) {
-                M[i][j] = (M[i-1][j-1] || 0) + (M[i-1][j] || 0);
-            }
-        }
-    }
-
-    return M;
-};
+  return M
+}
 ```
 
 ### 2019.4.25

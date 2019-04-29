@@ -1,3 +1,74 @@
+### 2019.4.29
+
+- 给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
+
+**说明**：
+本题中，我们将空字符串定义为有效的回文串。
+
+**示例 1**：
+
+```
+输入: "A man, a plan, a canal: Panama"
+输出: true
+```
+
+**示例 2**：
+
+```
+输入: "race a car"
+输出: false
+```
+
+> 我的答案
+
+```js
+var isPalindrome = function(s) {
+  s = s.replace(/([\W]+)/g, '').toLowerCase()
+
+  const length = s.length
+
+  let boolean = true
+
+  for (let i = 0; i < length / 2; i++) {
+    if (s[i] !== s[length - 1 - i]) {
+      boolean = false
+      break
+    }
+  }
+  return boolean
+}
+```
+
+> 优秀答案
+
+```js
+var isPalindrome = function(s) {
+    if (!s) {
+        return true
+    }
+    var start = 0
+    var end = s.length - 1
+    var reg = /[a-z]|[0-9]/
+    s = s.toLowerCase()
+    while (start <= end) {
+        if (!reg.test(s[start])) {
+            start++
+            continue;
+        }
+        if (!reg.test(s[end])) {
+            end--
+            continue;
+        }
+        if (s[start] !== s[end]) {
+            return false
+        }
+        start++
+        end--
+    }
+    return true
+};
+```
+
 ### 2019.4.28
 
 - 给定一个非空整数数组，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。
@@ -35,13 +106,13 @@ var singleNumber = function(nums) {
 > 优秀答案
 
 ```js
-var singleNumber = function (nums) {
-    var res;
-    nums.forEach(function (v) {
-        res = res ^ v;
-    });
-    return res;
-};
+var singleNumber = function(nums) {
+  var res
+  nums.forEach(function(v) {
+    res = res ^ v
+  })
+  return res
+}
 ```
 
 ### 2019.4.26

@@ -1,3 +1,60 @@
+### 2019.4.30
+
+- 请判断一个链表是否为回文链表。
+
+**示例 1**：
+
+```
+输入: 1->2
+输出: false
+```
+
+**示例 2**：
+
+```
+输入: 1->2->2->1
+输出: true
+```
+
+> 我的答案
+
+```js
+var isPalindrome = function(head) {
+  let arr = []
+  let length = 0
+  while (head) {
+    arr.push(head.val)
+    length++
+    head = head.next
+  }
+  for (let i = 0; i < length / 2; i++) {
+    if (arr[i] !== arr[length - 1 - i]) return false
+  }
+  return true
+}
+```
+
+> 优秀答案
+
+```js
+const isPalindrome = head => {
+  if (!head) return true
+
+  let tail = head
+  while (tail.next) {
+    tail.next.prev = tail
+    tail = tail.next
+  }
+  while (tail !== head && tail.next !== head) {
+    if (tail.val !== head.val) return false
+    head = head.next
+    tail = tail.prev
+  }
+
+  return true
+}
+```
+
 ### 2019.4.29
 
 - 给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写。
@@ -43,30 +100,30 @@ var isPalindrome = function(s) {
 
 ```js
 var isPalindrome = function(s) {
-    if (!s) {
-        return true
-    }
-    var start = 0
-    var end = s.length - 1
-    var reg = /[a-z]|[0-9]/
-    s = s.toLowerCase()
-    while (start <= end) {
-        if (!reg.test(s[start])) {
-            start++
-            continue;
-        }
-        if (!reg.test(s[end])) {
-            end--
-            continue;
-        }
-        if (s[start] !== s[end]) {
-            return false
-        }
-        start++
-        end--
-    }
+  if (!s) {
     return true
-};
+  }
+  var start = 0
+  var end = s.length - 1
+  var reg = /[a-z]|[0-9]/
+  s = s.toLowerCase()
+  while (start <= end) {
+    if (!reg.test(s[start])) {
+      start++
+      continue
+    }
+    if (!reg.test(s[end])) {
+      end--
+      continue
+    }
+    if (s[start] !== s[end]) {
+      return false
+    }
+    start++
+    end--
+  }
+  return true
+}
 ```
 
 ### 2019.4.28

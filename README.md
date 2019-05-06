@@ -1,3 +1,120 @@
+### 2019.5.6
+
+- 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+
+有效字符串需满足：
+
+1.  左括号必须用相同类型的右括号闭合。
+2.  左括号必须以正确的顺序闭合。
+
+注意空字符串可被认为是有效字符串。
+
+**示例 1**：
+
+```
+输入: "()"
+输出: true
+```
+
+**示例 2**：
+
+```
+输入: "()[]{}"
+输出: true
+```
+
+**示例 3**：
+
+```
+输入: "(]"
+输出: false
+```
+
+**示例 4**：
+
+```
+输入: "([)]"
+输出: false
+```
+
+**示例 5**：
+
+```
+输入: "{[]}"
+输出: true
+```
+
+> 我的答案
+
+```js
+var isValid = function(s) {
+  const arr = []
+  const length = s.length
+
+  for (let i = 0; i < length; i++) {
+    const num = transfer(s[i])
+    if (num > 0) {
+      arr.push(-1 * num)
+    } else if (num < 0) {
+      if (num === arr[arr.length - 1]) {
+        arr.pop()
+      } else {
+        return false
+      }
+    }
+  }
+
+  return arr.length ? false : true
+}
+
+function transfer(s) {
+  switch (s) {
+    case '(':
+      return 1
+    case ')':
+      return -1
+    case '{':
+      return 2
+    case '}':
+      return -2
+    case '[':
+      return 3
+    case ']':
+      return -3
+    default:
+      return 0
+  }
+}
+```
+
+> 优秀答案
+
+```js
+var isValid = function(s) {
+  var stack = []
+  var maps = {
+    '[': ']',
+    '{': '}',
+    '(': ')'
+  }
+
+  for (var i = 0; i < s.length; i++) {
+    if (s[i] === '[' || s[i] === '{' || s[i] === '(') {
+      stack.push(s[i])
+    } else {
+      var key = stack.pop()
+      if (maps[key] !== s[i]) {
+        return false
+      }
+    }
+  }
+  if (!stack.length) {
+    return true
+  }
+  return false
+}
+```
+
 ### 2019.5.5
 
 - 将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
@@ -44,19 +161,19 @@ function TreeNode(val) {
 
 ```js
 var sortedArrayToBST = function(nums) {
-    if(!nums.length) {
-        return null;
-    }
-   if(nums.length === 1) {
-        return new TreeNode(nums[0]);
-   } 
+  if (!nums.length) {
+    return null
+  }
+  if (nums.length === 1) {
+    return new TreeNode(nums[0])
+  }
 
-   var mid = parseInt(nums.length / 2);
-   var result = new TreeNode(nums[mid]);
-   result.left = sortedArrayToBST(nums.slice(0, mid));
-   result.right = sortedArrayToBST(nums.slice(mid + 1));
-   return result;
-};
+  var mid = parseInt(nums.length / 2)
+  var result = new TreeNode(nums[mid])
+  result.left = sortedArrayToBST(nums.slice(0, mid))
+  result.right = sortedArrayToBST(nums.slice(mid + 1))
+  return result
+}
 ```
 
 ### 2019.4.30

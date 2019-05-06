@@ -1,3 +1,64 @@
+### 2019.5.5
+
+- 将一个按照升序排列的有序数组，转换为一棵高度平衡二叉搜索树。本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+
+**示例**：
+
+```
+给定有序数组: [-10,-3,0,5,9],
+
+一个可能的答案是：[0,-3,9,-10,null,5]，它可以表示下面这个高度平衡二叉搜索树：
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+```
+
+> 我的答案
+
+```js
+var sortedArrayToBST = function(nums) {
+  const length = nums.length
+  if (!length) return null
+  let index = parseInt(length / 2)
+
+  const newNode = TreeNode(nums[index])
+
+  newNode.left = sortedArrayToBST(nums.slice(0, index))
+  newNode.right = sortedArrayToBST(nums.slice(index + 1, length))
+
+  return newNode
+}
+
+function TreeNode(val) {
+  const Obj = {}
+  Obj.val = val
+  Obj.left = Obj.right = null
+  return Obj
+}
+```
+
+> 优秀答案
+
+```js
+var sortedArrayToBST = function(nums) {
+    if(!nums.length) {
+        return null;
+    }
+   if(nums.length === 1) {
+        return new TreeNode(nums[0]);
+   } 
+
+   var mid = parseInt(nums.length / 2);
+   var result = new TreeNode(nums[mid]);
+   result.left = sortedArrayToBST(nums.slice(0, mid));
+   result.right = sortedArrayToBST(nums.slice(mid + 1));
+   return result;
+};
+```
+
 ### 2019.4.30
 
 - 请判断一个链表是否为回文链表。

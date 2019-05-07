@@ -1,3 +1,76 @@
+### 2019.5.5
+
+- 给定两个数组，编写一个函数来计算它们的交集。
+
+**示例 1**：
+
+```
+输入: nums1 = [1,2,2,1], nums2 = [2,2]
+输出: [2,2]
+```
+
+**示例 2**：
+
+```
+输入: nums1 = [4,9,5], nums2 = [9,4,9,8,4]
+输出: [4,9]
+```
+
+**说明**：
+
+- 输出结果中每个元素出现的次数，应与元素在两个数组中出现的次数一致。
+- 我们可以不考虑输出结果的顺序。
+
+> 我的答案
+
+```js
+var intersect = function(nums1, nums2) {
+  let arr = []
+  let shorterList
+  let longerList
+  if (nums1.lenght < nums2.length) {
+    shorterList = nums1
+    longerList = nums2
+  } else {
+    shorterList = nums2
+    longerList = nums1
+  }
+  shorterList.forEach(e => {
+    let index = longerList.indexOf(e)
+    if (index > -1) {
+      arr.push(longerList.splice(index, 1)[0])
+    }
+  })
+  return arr
+}
+```
+
+> 优秀答案
+
+```js
+var intersect = function(nums1, nums2) {
+    const process = function (nums) {
+        return nums.reduce((obj,key)=>{
+            if(key in obj){
+                obj[key] ++ 
+            }else{
+                obj[key] = 1
+            }
+            return obj
+        },{})
+    }
+    var num1Map = process(nums1)
+    var num2Map = process(nums2)
+    var ret = []
+    Object.keys(num1Map).forEach(key=>{
+        if(key in num1Map && key in num2Map){
+            ret.push(...Array(Math.min(num1Map[key],num2Map[key])).fill(key))
+        }
+    })
+    return ret
+};
+```
+
 ### 2019.5.6
 
 - 给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。

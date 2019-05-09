@@ -11,6 +11,7 @@
 输出：true
 解释：链表中有一个环，其尾部连接到第二个节点。
 ```
+![image](https://user-images.githubusercontent.com/18693417/57422273-ff1c5b80-7241-11e9-882e-4d7f5e4cdbdb.png)
 
 **示例 2**：
 
@@ -19,6 +20,7 @@
 输出：true
 解释：链表中有一个环，其尾部连接到第一个节点。
 ```
+![image](https://user-images.githubusercontent.com/18693417/57422285-0cd1e100-7242-11e9-9540-d997130e3436.png)
 
 **示例 3**：
 
@@ -27,6 +29,7 @@
 输出：false
 解释：链表中没有环。
 ```
+![image](https://user-images.githubusercontent.com/18693417/57422296-165b4900-7242-11e9-8d02-b926beb68df2.png)
 
 > 我的答案(快慢指针)
 

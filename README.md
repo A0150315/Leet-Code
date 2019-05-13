@@ -1,3 +1,48 @@
+### 2019.5.13
+
+给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数。
+
+**示例 1**：
+
+```
+输入: [3,0,1]
+输出: 2
+```
+
+**示例 2**：
+
+```
+输入: [9,6,4,2,3,5,7,0,1]
+输出: 8
+```
+
+> 我的答案
+
+```js
+var missingNumber = function(nums) {
+  if (nums.length === 1 && nums[0] === 0) return 1
+  const sum = nums.reduce((a, b) => a + b)
+  let midNums = 0
+  nums.length % 2 === 0 && (midNums = nums.length / 2)
+  const tempSum =
+    (1 + nums.length - 1) * parseInt((nums.length - 1) / 2) + midNums
+  const dis = sum - tempSum
+  return dis === 0 ? Math.max(...nums) + 1 : Math.max(...nums) - dis
+}
+```
+
+> 优秀答案
+
+```js
+var missingNumber = function(nums) {
+  var sum = 0
+  sum = nums.reduce((sum, i) => {
+    return sum + i
+  })
+  return (nums.length * (nums.length + 1)) / 2 - sum
+}
+```
+
 ### 2019.5.9
 
 给定一个链表，判断链表中是否有环。(快慢指针)

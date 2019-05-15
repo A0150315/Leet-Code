@@ -1,64 +1,78 @@
-### 2019.5.14
+### 2019.5.15
 
-给定一个由整数组成的非空数组所表示的非负整数，在该数的基础上加一。
+实现 strStr() 函数。
 
-最高位数字存放在数组的首位， 数组中每个元素只存储一个数字。
-
-你可以假设除了整数 0 之外，这个整数不会以零开头。
-
+给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从 0 开始)。如果不存在，则返回 -1。
 **示例 1**：
 
 ```
-输入: [1,2,3]
-输出: [1,2,4]
-解释: 输入数组表示数字 123。
+输入: haystack = "hello", needle = "ll"
+输出: 2
 ```
 
 **示例 2**：
 
 ```
-输入: [4,3,2,1]
-输出: [4,3,2,2]
-解释: 输入数组表示数字 4321。
+输入: haystack = "aaaaa", needle = "bba"
+输出: -1
 ```
+
+**说明**:
+
+当 needle 是空字符串时，我们应当返回什么值呢？这是一个在面试中很好的问题。
+
+对于本题而言，当 needle 是空字符串时我们应当返回 0 。这与 C 语言的 strstr() 以及 Java 的 indexOf() 定义相符。
 
 > 我的答案
 
 ```js
-var plusOne = function(digits) {
-  for (let i = digits.length - 1; i >= 0; i--) {
-    if (digits[i] === 9) {
-      digits[i] = 0
-      if (i === 0) digits.unshift(1)
-    } else {
-      digits[i] = digits[i] + 1
-      return digits
+var strStr = function(haystack, needle) {
+  if (!needle) return 0
+  for (let i = 0; i < haystack.length - needle.length + 1; i++) {
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] === needle[j]) {
+        if (j === needle.length - 1) {
+          return i
+        }
+      } else {
+        break
+      }
     }
   }
-  return digits
+  return -1
 }
 ```
 
 > 优秀答案
 
 ```js
-var plusOne = function(digits) {
-    let num = 1,
-        i = digits.length;
-    while(i) {
-        i--;
-        if (digits[i] === 9) {
-            digits[i] = 0;
-            num = 1;
-        } else {
-            digits[i] += num;
-            num = 0;
-            break;
-        }
+var strStr = function(sourceStr, searchStr) {
+    var i = 0,
+		j = 0,
+		sourceLen = sourceStr.length,
+		searchLen = searchStr.length;
+    if(sourceLen===0 && searchLen===0 || searchLen===0){
+        return 0
     }
-    if (!i && num)
-        digits.unshift(1);
-    return digits;
+	if (searchLen > sourceLen) {
+		return -1
+	}
+	while (i < sourceLen) {
+		// 两字母相等则继续
+		if (sourceStr.charAt(i) === searchStr.charAt(j)) {
+			i++;
+			j++;
+		} else { // 两字母不等则角标后退重新开始匹配
+			i = i - j + 1; // i 回退到上次匹配首位的下一位
+			j = 0; // j回退到子串的首位
+		}
+		//是字符串的长度
+		if (j === searchLen) {
+			//匹配起始位置
+			return i - j;
+		}
+	}
+	return -1;
 };
 ```
 

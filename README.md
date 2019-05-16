@@ -1,8 +1,61 @@
+### 2019.5.16
+
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+**示例**：
+
+```
+输入: [0,1,0,3,12]
+输出: [1,3,12,0,0]
+```
+
+**说明**:
+
+1. 必须在原数组上操作，不能拷贝额外的数组。
+2. 尽量减少操作次数。
+
+> 我的答案
+
+```js
+var moveZeroes = function(nums) {
+  let zerosQulity = 0
+  for (let i = 0; i < nums.length - zerosQulity; ) {
+    let k = 0
+    if (nums[i] === 0) {
+      zerosQulity++
+      for (let j = i + k + 1; j < nums.length - zerosQulity + 1; j++, k++) {
+        if (nums[j] === 0) continue
+        ;[nums[i + k], nums[j]] = [nums[j], nums[i + k]]
+      }
+    }
+    if (nums[i] !== 0) i++
+  }
+  return nums
+}
+```
+
+> 优秀答案
+
+```js
+var moveZeroes = function(nums) {
+    var zeroCount = 0;
+    for(var i=0; i<nums.length; i++){
+       if(nums[i]==0){
+           zeroCount ++;
+       }else if(zeroCount>0){
+           nums[i-zeroCount]=nums[i];
+           nums[i] = 0;
+       }
+    }
+};
+```
+
 ### 2019.5.15
 
 实现 strStr() 函数。
 
 给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从 0 开始)。如果不存在，则返回 -1。
+
 **示例 1**：
 
 ```
@@ -47,33 +100,34 @@ var strStr = function(haystack, needle) {
 
 ```js
 var strStr = function(sourceStr, searchStr) {
-    var i = 0,
-		j = 0,
-		sourceLen = sourceStr.length,
-		searchLen = searchStr.length;
-    if(sourceLen===0 && searchLen===0 || searchLen===0){
-        return 0
+  var i = 0,
+    j = 0,
+    sourceLen = sourceStr.length,
+    searchLen = searchStr.length
+  if ((sourceLen === 0 && searchLen === 0) || searchLen === 0) {
+    return 0
+  }
+  if (searchLen > sourceLen) {
+    return -1
+  }
+  while (i < sourceLen) {
+    // 两字母相等则继续
+    if (sourceStr.charAt(i) === searchStr.charAt(j)) {
+      i++
+      j++
+    } else {
+      // 两字母不等则角标后退重新开始匹配
+      i = i - j + 1 // i 回退到上次匹配首位的下一位
+      j = 0 // j回退到子串的首位
     }
-	if (searchLen > sourceLen) {
-		return -1
-	}
-	while (i < sourceLen) {
-		// 两字母相等则继续
-		if (sourceStr.charAt(i) === searchStr.charAt(j)) {
-			i++;
-			j++;
-		} else { // 两字母不等则角标后退重新开始匹配
-			i = i - j + 1; // i 回退到上次匹配首位的下一位
-			j = 0; // j回退到子串的首位
-		}
-		//是字符串的长度
-		if (j === searchLen) {
-			//匹配起始位置
-			return i - j;
-		}
-	}
-	return -1;
-};
+    //是字符串的长度
+    if (j === searchLen) {
+      //匹配起始位置
+      return i - j
+    }
+  }
+  return -1
+}
 ```
 
 ### 2019.5.13

@@ -1,3 +1,95 @@
+### 2019.5.17
+
+报数序列是一个整数序列，按照其中的整数的顺序进行报数，得到下一个数。其前五项如下：
+
+```
+1.     1
+2.     11
+3.     21
+4.     1211
+5.     111221
+```
+
+1 被读作 "one 1" ("一个一") , 即 11。
+
+11 被读作 "two 1s" ("两个一"）, 即 21。
+
+21 被读作 "one 2", "one 1" （"一个二" , "一个一") , 即 1211。
+
+**给定一个正整数 n（1 ≤ n ≤ 30），输出报数序列的第 n 项。**
+
+**注意：整数顺序将表示为一个字符串。**
+
+**示例 1**：
+
+```
+输入: 1
+输出: "1"
+```
+
+**示例 2**：
+
+```
+输入: 4
+输出: "1211"
+```
+
+> 我的答案
+
+```js
+var countAndSay = function(n, i = 1, k = '1') {
+  if (n > i) {
+    let newStr = ''
+    let strMap = new Map()
+    for (let j = 0; j < k.length; j++) {
+      if (strMap.has(k[j]) || strMap.get(k[j]) === 0) {
+        strMap.set(k[j], strMap.get(k[j]) + 1)
+      } else {
+        strMap.set(k[j], 1)
+        if (j > 0) {
+          newStr += strMap.get(k[j - 1]) + k[j - 1]
+          strMap.delete(k[j - 1])
+        }
+      }
+    }
+
+    for (var key of strMap.keys()) {
+      if (strMap.get(key) === 0) continue
+      newStr += strMap.get(key) + key
+    }
+    return countAndSay(n, ++i, newStr)
+  } else {
+    return k
+  }
+}
+```
+
+> 优秀答案
+
+```js
+var countAndSay = function(n) {
+  if (n === 1) return '1'
+
+  var prev = countAndSay(n - 1)
+  var i = 0
+  var result = ''
+  var current = ''
+  var count = 0
+  while (prev[i] != null) {
+    if (current !== prev[i]) {
+      result += count ? `${count}${current}` : ''
+      current = prev[i]
+      count = 1
+    } else {
+      count++
+    }
+    i++
+  }
+  result += count ? `${count}${current}` : ''
+  return result
+}
+```
+
 ### 2019.5.16
 
 给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
@@ -38,16 +130,16 @@ var moveZeroes = function(nums) {
 
 ```js
 var moveZeroes = function(nums) {
-    var zeroCount = 0;
-    for(var i=0; i<nums.length; i++){
-       if(nums[i]==0){
-           zeroCount ++;
-       }else if(zeroCount>0){
-           nums[i-zeroCount]=nums[i];
-           nums[i] = 0;
-       }
+  var zeroCount = 0
+  for (var i = 0; i < nums.length; i++) {
+    if (nums[i] == 0) {
+      zeroCount++
+    } else if (zeroCount > 0) {
+      nums[i - zeroCount] = nums[i]
+      nums[i] = 0
     }
-};
+  }
+}
 ```
 
 ### 2019.5.15

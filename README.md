@@ -1,3 +1,74 @@
+### 2019.5.22
+
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+**示例1**：
+
+```
+输入: ["flower","flow","flight"]
+输出: "fl"
+```
+
+**示例2**：
+
+```
+输入: ["dog","racecar","car"]
+输出: ""
+解释: 输入不存在公共前缀。
+```
+
+> 我的答案
+
+```js
+var longestCommonPrefix = function(strs) {
+  let sameStr = ''
+  const _strs = strs.slice(1)
+  for (const index in strs[0]) {
+    if (_strs.length === 0) return strs[0]
+    for (const _index in _strs) {
+      if (strs[0][index] === _strs[_index][index]) {
+        if (_index == _strs.length - 1) sameStr += strs[0][index]
+      } else {
+        return sameStr
+      }
+    }
+  }
+  return sameStr
+}
+```
+
+> 优秀答案
+
+```js
+var longestCommonPrefix = function(strs) {
+   var res = "";
+   if(!strs.length) {
+       return "";
+   }
+   if(strs.length === 1) {
+       return strs[0];
+   }
+
+   res = strs[0];
+   for(var i = 1; i < strs.length; i++) {
+    var j = res.length;   
+    while(j >= 0) {
+        if(res === strs[i].substr(0, j)) {
+            res = strs[i].substr(0, j);
+            break;
+        } else {
+            j--;
+            res = res.substr(0, j);
+        } 
+    }
+   }
+
+   return res;
+};
+```
+
 ### 2019.5.21
 
 给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那 两个 整数，并返回他们的数组下标。

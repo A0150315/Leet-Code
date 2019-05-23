@@ -106,7 +106,7 @@ var isValidSudoku = function(board) {
 }
 ```
 
-> 优秀答案
+> 优秀答案（另可参考八皇后算法）
 
 ```js
 var isValidSudoku = function(board) {

@@ -1,17 +1,162 @@
+### 2019.5.23
+
+判断一个 9x9 的数独是否有效。只需要根据以下规则，验证已经填入的数字是否有效即可。
+
+1. 数字 1-9 在每一行只能出现一次。
+2. 数字 1-9 在每一列只能出现一次。
+3. 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
+
+![image](https://user-images.githubusercontent.com/18693417/58221239-6b1fb900-7d44-11e9-8fe5-2a7fb2a54fd8.png)
+
+
+上图是一个部分填充的有效的数独。
+
+数独部分空格内已填入了数字，空白格用 '.' 表示。
+
+**示例 1**：
+
+```
+输入:
+[
+  ["5","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: true
+```
+
+**示例 2**：
+
+```
+输入:
+[
+  ["8","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+输出: false
+解释: 除了第一行的第一个数字从 5 改为 8 以外，空格内其他数字均与 示例1 相同。
+     但由于位于左上角的 3x3 宫内有两个 8 存在, 因此这个数独是无效的。
+```
+
+说明:
+
+- 一个有效的数独（部分已被填充）不一定是可解的。
+- 只需要根据以上规则，验证已经填入的数字是否有效即可。
+- 给定数独序列只包含数字 1-9 和字符 '.' 。
+- 给定数独永远是 9x9 形式的。
+
+> 我的答案
+
+```js
+var isValidSudoku = function(board) {
+  let correct = false
+  correct = board.every(nums => {
+    let numsMap = {}
+    return nums.every(num => {
+      if (numsMap[num] && num !== '.') return false
+      numsMap[num] = true
+      return true
+    })
+  })
+  if (correct)
+    for (let i = 0; i < 9; i++) {
+      let numsMap = {}
+      correct = board.every(nums => {
+        if (numsMap[nums[i]] && nums[i] !== '.') return false
+        numsMap[nums[i]] = true
+        return true
+      })
+      if (!correct) break
+    }
+
+  if (correct)
+    for (let i = 0; i < 9; i++) {
+      let numsMap = {}
+      for (let j = Math.trunc(i / 3) * 3; j < Math.trunc(i / 3) * 3 + 3; j++) {
+        for (
+          let k = (i - Math.trunc(i / 3) * 3) * 3;
+          k < (i - Math.trunc(i / 3) * 3) * 3 + 3;
+          k++
+        ) {
+          if (numsMap[board[j][k]] && board[j][k] !== '.') {
+            correct = false
+            break
+          }
+          numsMap[board[j][k]] = true
+        }
+        if (!correct) break
+      }
+      if (!correct) break
+    }
+
+  return correct
+}
+```
+
+> 优秀答案
+
+```js
+var isValidSudoku = function(board) {
+  let res = true;
+  let row = []
+  let column = []
+  let box = [];
+
+  // 创建hash表
+  for (let i = 0; i < 9; i++) {
+    row[i] = {}
+    column[i] = {}
+    box[i] = {}
+  }
+
+  for (let i = 0; i < 9; i++) {
+    if (!res) break;
+    for (let j = 0; j < 9; j++) {
+      const current = board[i][j]
+      if (current !== '.') {
+        const boxIndex = (i / 3 | 0) * 3 + (j / 3 | 0)
+        if (row[i][current] || column[j][current] || box[boxIndex][current]) {
+          res = false;
+          break;
+        }
+        row[i][current] = 1;
+        column[j][current] = 1;
+        box[boxIndex][current] = 1;
+      }
+    }
+  }
+
+  return res;
+};
+```
+
 ### 2019.5.22
 
 编写一个函数来查找字符串数组中的最长公共前缀。
 
 如果不存在公共前缀，返回空字符串 ""。
 
-**示例1**：
+**示例 1**：
 
 ```
 输入: ["flower","flow","flight"]
 输出: "fl"
 ```
 
-**示例2**：
+**示例 2**：
 
 ```
 输入: ["dog","racecar","car"]
@@ -43,30 +188,30 @@ var longestCommonPrefix = function(strs) {
 
 ```js
 var longestCommonPrefix = function(strs) {
-   var res = "";
-   if(!strs.length) {
-       return "";
-   }
-   if(strs.length === 1) {
-       return strs[0];
-   }
+  var res = ''
+  if (!strs.length) {
+    return ''
+  }
+  if (strs.length === 1) {
+    return strs[0]
+  }
 
-   res = strs[0];
-   for(var i = 1; i < strs.length; i++) {
-    var j = res.length;   
-    while(j >= 0) {
-        if(res === strs[i].substr(0, j)) {
-            res = strs[i].substr(0, j);
-            break;
-        } else {
-            j--;
-            res = res.substr(0, j);
-        } 
+  res = strs[0]
+  for (var i = 1; i < strs.length; i++) {
+    var j = res.length
+    while (j >= 0) {
+      if (res === strs[i].substr(0, j)) {
+        res = strs[i].substr(0, j)
+        break
+      } else {
+        j--
+        res = res.substr(0, j)
+      }
     }
-   }
+  }
 
-   return res;
-};
+  return res
+}
 ```
 
 ### 2019.5.21
@@ -100,18 +245,18 @@ var twoSum = function(nums, target) {
 
 ```js
 var twoSum = function(nums, target) {
-    var map = {}
-    for (var index = 0; index < nums.length; ++index) {
-        map[nums[index]] = index
+  var map = {}
+  for (var index = 0; index < nums.length; ++index) {
+    map[nums[index]] = index
+  }
+
+  for (var index = 0; index < nums.length; ++index) {
+    var value = target - nums[index]
+    if (map[value] != undefined && map[value] != index) {
+      return [index, map[value]]
     }
-    
-    for (var index = 0; index < nums.length; ++index) {
-        var value = target - nums[index]
-        if (map[value] != undefined && map[value] != index) {
-            return [index, map[value]]
-        }
-    }
-};
+  }
+}
 ```
 
 ### 2019.5.17

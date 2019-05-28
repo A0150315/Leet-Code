@@ -1,3 +1,131 @@
+### 2019.5.28
+
+编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。该矩阵具有以下特性：
+
+- 每行的元素从左到右升序排列。
+- 每列的元素从上到下升序排列。
+
+**示例**:
+
+现有矩阵 matrix 如下：
+
+```
+[
+  [1,   4,  7, 11, 15],
+  [2,   5,  8, 12, 19],
+  [3,   6,  9, 16, 22],
+  [10, 13, 14, 17, 24],
+  [18, 21, 23, 26, 30]
+]
+```
+
+> 我的答案（错误答案(128/129 cases passed)）
+
+```js
+var searchMatrix = function(matrix, target) {
+  let m = 0
+  let n = 0
+  let map = new Map()
+  while (matrix[m] && (matrix[m][n] || matrix[m][n] === 0)) {
+    if (map.has('' + m + n)) {
+      return false
+    }
+    const proofreading = matrix[m][n]
+    map.set('' + m + n)
+    if (proofreading === target) return true
+    if (proofreading < target) {
+      if (m === matrix.length - 1) {
+        n++
+        continue
+      }
+      if (n === matrix[m].length - 1) {
+        m++
+        continue
+      }
+      if (matrix[m][n + 1] > matrix[m + 1][n]) {
+        m++
+        if (map.has('' + m + n)) {
+          n++
+          m--
+        }
+        while (map.has('' + m + n)) {
+          n++
+        }
+      } else {
+        n++
+        if (map.has('' + m + n)) {
+          m++
+          n--
+        }
+        while (map.has('' + m + n)) {
+          m++
+        }
+      }
+    } else {
+      if (m === 0) {
+        m++
+        continue
+      }
+      if (n === 0) {
+        n++
+        continue
+      }
+      if (matrix[m][n - 1] > matrix[m - 1][n]) {
+        n--
+        if (map.has('' + m + n)) {
+          n++
+          m--
+        }
+        while (map.has('' + m + n)) {
+          m--
+        }
+      } else {
+        m--
+        if (map.has('' + m + n)) {
+          m++
+          n--
+        }
+        while (map.has('' + m + n)) {
+          n--
+        }
+      }
+    }
+  }
+  return false
+}
+```
+
+> 优秀答案
+
+```js
+var searchMatrix = function(matrix, target) {
+  let rows = matrix.length - 1
+  if (rows <= -1) {
+    return false
+  }
+  let column = matrix[0].length - 1
+  if (column <= -1) {
+    return false
+  }
+  let index = 0
+
+  while (true) {
+    if (target === matrix[rows][index]) {
+      return true
+    } else if (target > matrix[rows][index]) {
+      // 行找
+      index += 1
+    } else {
+      rows -= 1
+    }
+
+    if (index > column || rows < 0) {
+      return false
+    }
+  }
+}
+```
+
 ### 2019.5.27
 
 给定一个大小为 n 的数组，找到其中的众数。众数是指在数组中出现次数大于 ⌊ n/2 ⌋ 的元素。
@@ -33,7 +161,7 @@ var majorityElement = function(nums) {
       maxNum = num
     }
   })
-  return  maxNum
+  return maxNum
 }
 ```
 
@@ -41,20 +169,20 @@ var majorityElement = function(nums) {
 
 ```js
 var majorityElement = function(nums) {
-    var count = 1;
-    var m = nums[0];
-    for (var i = 1; i < nums.length; ++i) {
-        if (nums[i] == m) {
-            count++;
-        } else if (count == 0) {
-            m = nums[i];
-            count = 1;
-        } else {
-            count--;
-        }
+  var count = 1
+  var m = nums[0]
+  for (var i = 1; i < nums.length; ++i) {
+    if (nums[i] == m) {
+      count++
+    } else if (count == 0) {
+      m = nums[i]
+      count = 1
+    } else {
+      count--
     }
-    return m;
-};
+  }
+  return m
+}
 ```
 
 ### 2019.5.24
@@ -70,7 +198,7 @@ var majorityElement = function(nums) {
 **示例 1**：
 
 ```
-给定 matrix = 
+给定 matrix =
 [
   [1,2,3],
   [4,5,6],
@@ -94,7 +222,7 @@ var majorityElement = function(nums) {
   [ 2, 4, 8,10],
   [13, 3, 6, 7],
   [15,14,12,16]
-], 
+],
 
 原地旋转输入矩阵，使其变为:
 [
@@ -131,18 +259,18 @@ var rotate = function(matrix) {
 
 ```js
 var rotate = function(matrix) {
-    var i, j, temp;
-    var len = matrix.length;
-    for (i = 0; i < len - 1; i++) {
-        for (j = i; i + j < len -1; j++) {
-            temp = matrix[i][j];
-            matrix[i][j] = matrix[len - 1 - j][i];
-            matrix[len - 1 - j][i] = matrix[len - 1 - i][len - 1 - j];
-            matrix[len - 1 - i][len - 1 - j] = matrix[j][len - 1 - i];
-            matrix[j][len - 1 - i] = temp;
-        }
+  var i, j, temp
+  var len = matrix.length
+  for (i = 0; i < len - 1; i++) {
+    for (j = i; i + j < len - 1; j++) {
+      temp = matrix[i][j]
+      matrix[i][j] = matrix[len - 1 - j][i]
+      matrix[len - 1 - j][i] = matrix[len - 1 - i][len - 1 - j]
+      matrix[len - 1 - i][len - 1 - j] = matrix[j][len - 1 - i]
+      matrix[j][len - 1 - i] = temp
     }
-};
+  }
+}
 ```
 
 ### 2019.5.23
@@ -154,7 +282,6 @@ var rotate = function(matrix) {
 3. 数字 1-9 在每一个以粗实线分隔的 3x3 宫内只能出现一次。
 
 ![image](https://user-images.githubusercontent.com/18693417/58221239-6b1fb900-7d44-11e9-8fe5-2a7fb2a54fd8.png)
-
 
 上图是一个部分填充的有效的数独。
 
@@ -257,10 +384,10 @@ var isValidSudoku = function(board) {
 
 ```js
 var isValidSudoku = function(board) {
-  let res = true;
+  let res = true
   let row = []
   let column = []
-  let box = [];
+  let box = []
 
   // 创建hash表
   for (let i = 0; i < 9; i++) {
@@ -270,24 +397,24 @@ var isValidSudoku = function(board) {
   }
 
   for (let i = 0; i < 9; i++) {
-    if (!res) break;
+    if (!res) break
     for (let j = 0; j < 9; j++) {
       const current = board[i][j]
       if (current !== '.') {
-        const boxIndex = (i / 3 | 0) * 3 + (j / 3 | 0)
+        const boxIndex = ((i / 3) | 0) * 3 + ((j / 3) | 0)
         if (row[i][current] || column[j][current] || box[boxIndex][current]) {
-          res = false;
-          break;
+          res = false
+          break
         }
-        row[i][current] = 1;
-        column[j][current] = 1;
-        box[boxIndex][current] = 1;
+        row[i][current] = 1
+        column[j][current] = 1
+        box[boxIndex][current] = 1
       }
     }
   }
 
-  return res;
-};
+  return res
+}
 ```
 
 ### 2019.5.22

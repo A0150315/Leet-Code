@@ -43,7 +43,6 @@ var threeSumMulti = function(A, target) {
   const M = Math.pow(10, 9) + 7
   // 复杂度O(n^2)
   A = A.sort((a, b) => a - b)
-  console.log(A)
   let res = 0
   for (let k = 0; k + 2 < A.length; k++) {
     // 第一个数为A[k]

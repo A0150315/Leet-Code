@@ -1,3 +1,113 @@
+### 2019.5.29
+
+给定一个整数数组 A，以及一个整数 target 作为目标值，返回满足 i < j < k 且 A[i] + A[j] + A[k] == target 的元组 i, j, k 的数量。
+
+由于结果会非常大，请返回 结果除以 10^9 + 7 的余数。
+
+**示例 1**：
+
+```
+输入：A = [1,1,2,2,3,3,4,4,5,5], target = 8
+输出：20
+解释：
+按值枚举（A[i]，A[j]，A[k]）：
+(1, 2, 5) 出现 8 次；
+(1, 3, 4) 出现 8 次；
+(2, 2, 4) 出现 2 次；
+(2, 3, 3) 出现 2 次。
+```
+
+**示例 2**：
+
+```
+输入：A = [1,1,2,2,3,3,4,4,5,5], target = 8
+输出：20
+解释：
+按值枚举（A[i]，A[j]，A[k]）：
+(1, 2, 5) 出现 8 次；
+(1, 3, 4) 出现 8 次；
+(2, 2, 4) 出现 2 次；
+(2, 3, 3) 出现 2 次。
+```
+
+**提示**：
+
+1. 3 <= A.length <= 3000
+2. 0 <= A[i] <= 100
+3. 0 <= target <= 300
+
+> 我的答案（复制粘贴别人的）
+
+```js
+var threeSumMulti = function(A, target) {
+  const M = Math.pow(10, 9) + 7
+  // 复杂度O(n^2)
+  A = A.sort((a, b) => a - b)
+  console.log(A)
+  let res = 0
+  for (let k = 0; k + 2 < A.length; k++) {
+    // 第一个数为A[k]
+    let i = k + 1,
+      j = A.length - 1
+    while (i < j) {
+      if (A[i] + A[j] > target - A[k]) {
+        j--
+      } else if (A[i] + A[j] == target - A[k]) {
+        if (A[i] == A[j]) {
+          // C(j-i+1,2)
+          res = (res + ((j - i + 1) * (j - i)) / 2) % M
+          break
+        } else {
+          let ti = i,
+            tj = j
+          while (ti + 1 < tj && A[ti] == A[ti + 1]) ti++
+          while (ti < tj - 1 && A[tj] == A[tj - 1]) tj--
+          res = (res + (ti - i + 1) * (j - tj + 1)) % M
+          i = ti
+          i++
+          j = tj
+          tj--
+        }
+      } else {
+        i++
+      }
+    }
+  }
+  return res
+}
+```
+
+> 优秀答案
+
+```js
+var threeSumMulti = function(A, target) {
+    let store = [];
+    let i;
+    let result = 0;
+    for(i=0;i<=target;i++){
+        store[i] = 0;
+    }
+    for(i = A.length -1 ;i>=0;i--){
+        if(A[i]<=target) store[A[i]]++
+    }
+    for(i=0;i<target/3;i++){
+        for(let j=(i+1);j<=(target/2);j++){
+            if( (target-i-j) > j){
+                result = result + store[i] * store[j] * store[target-i-j];
+                continue;
+            }
+            if( (target-i-j) == j)
+               result = result + store[j]*(store[j]-1)/2 * store[i];   
+        }
+        result = result + store[i]*(store[i]-1)/2 * store[target-2*i];    
+    }
+    if(target%3===0){
+        return (result + store[target/3]*(store[target/3]-1) * (store[target/3]-2)/6)%(Math.pow(10,9)+7);
+    }
+    return result%(Math.pow(10,9)+7);
+};
+```
+
 ### 2019.5.28
 
 编写一个高效的算法来搜索 m x n 矩阵 matrix 中的一个目标值 target。该矩阵具有以下特性：

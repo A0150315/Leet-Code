@@ -59,6 +59,7 @@ var superEggDrop = function(K, N, sum = 1, floor = N, ceil = 0, string) {
 > 优秀答案
 
 ```js
+// https://github.com/Shellbye/Shellbye.github.io/issues/42
 var superEggDrop = function (K, N) {
     if (N <= 2 || K === 1) return N
     const aux = new Array(K + 1).fill(1)

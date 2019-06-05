@@ -1,6 +1,88 @@
+### 2019.6.5
+
+给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。
+
+返回 s 所有可能的分割方案。
+
+**示例**：
+
+```
+输入: "aab"
+输出:
+[
+  ["aa","b"],
+  ["a","a","b"]
+]
+```
+
+> 我的答案（没做出来）❌
+
+```js
+```
+
+> 优秀答案（回溯法）
+
+```js
+function isPalindrome(s, start, end) {
+  if (start > end) return false;
+  while (start < end) {
+    const c1 = s.charCodeAt(start);
+    const c2 = s.charCodeAt(end);
+    if (
+      c1 === c2 ||
+      (c1 - c2 === 32 && c2 >= 65 && c2 <= 90) ||
+      (c2 - c1 === 32 && c1 >= 65 && c1 <= 90)
+    ) {
+      start++;
+      end--;
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+/*
+ * @lc app=leetcode.cn id=131 lang=javascript
+ *
+ * [131] 分割回文串
+ */
+/**
+ * @param {string} s
+ * @return {string[][]}
+ */
+var partition = function(s) {
+  const result = [];
+  const ll = [];
+  // Solution1(s, 0, result, ll);
+  return Solution2(s);
+};
+
+function Solution2(s) {
+  if (s.length === 0) {
+    return [[]];
+  }
+  if (s.length === 1) {
+    return [[s[0]]];
+  }
+  const results = [];
+  for (let i = 0; i < s.length; i++) {
+    if (isPalindrome(s, 0, i)) {
+      const pre = s.slice(0, i + 1);
+      const afterResults = Solution2(s.slice(i + 1));
+      for (const after of afterResults) {
+        after.unshift(pre);
+        results.push(after);
+      }
+    }
+  }
+  return results;
+}
+```
+
 ### 2019.5.30
 
-你将获得 K 个鸡蛋，并可以使用一栋从 1 到 N  共有 N 层楼的建筑。
+你将获得 K 个鸡蛋，并可以使用一栋从 1 到 N 共有 N 层楼的建筑。
 
 每个蛋的功能都是一样的，如果一个蛋碎了，你就不能再把它掉下去。
 
@@ -60,20 +142,21 @@ var superEggDrop = function(K, N, sum = 1, floor = N, ceil = 0, string) {
 
 ```js
 // https://github.com/Shellbye/Shellbye.github.io/issues/42
-var superEggDrop = function (K, N) {
-    if (N <= 2 || K === 1) return N
-    const aux = new Array(K + 1).fill(1)
-    aux[0] = 0
-    let m = 1
-    while (aux[K] < N) {
-        m++
-        for (let e = K; e > 0; e--) {
-            aux[e] = aux[e] + aux[e - 1] + 1
-        }
+var superEggDrop = function(K, N) {
+  if (N <= 2 || K === 1) return N
+  const aux = new Array(K + 1).fill(1)
+  aux[0] = 0
+  let m = 1
+  while (aux[K] < N) {
+    m++
+    for (let e = K; e > 0; e--) {
+      aux[e] = aux[e] + aux[e - 1] + 1
     }
-    return m
-};
+  }
+  return m
+}
 ```
+
 ### 2019.5.29
 
 给定一个整数数组 A，以及一个整数 target 作为目标值，返回满足 i < j < k 且 A[i] + A[j] + A[k] == target 的元组 i, j, k 的数量。
@@ -154,31 +237,38 @@ var threeSumMulti = function(A, target) {
 
 ```js
 var threeSumMulti = function(A, target) {
-    let store = [];
-    let i;
-    let result = 0;
-    for(i=0;i<=target;i++){
-        store[i] = 0;
+  let store = []
+  let i
+  let result = 0
+  for (i = 0; i <= target; i++) {
+    store[i] = 0
+  }
+  for (i = A.length - 1; i >= 0; i--) {
+    if (A[i] <= target) store[A[i]]++
+  }
+  for (i = 0; i < target / 3; i++) {
+    for (let j = i + 1; j <= target / 2; j++) {
+      if (target - i - j > j) {
+        result = result + store[i] * store[j] * store[target - i - j]
+        continue
+      }
+      if (target - i - j == j)
+        result = result + ((store[j] * (store[j] - 1)) / 2) * store[i]
     }
-    for(i = A.length -1 ;i>=0;i--){
-        if(A[i]<=target) store[A[i]]++
-    }
-    for(i=0;i<target/3;i++){
-        for(let j=(i+1);j<=(target/2);j++){
-            if( (target-i-j) > j){
-                result = result + store[i] * store[j] * store[target-i-j];
-                continue;
-            }
-            if( (target-i-j) == j)
-               result = result + store[j]*(store[j]-1)/2 * store[i];   
-        }
-        result = result + store[i]*(store[i]-1)/2 * store[target-2*i];    
-    }
-    if(target%3===0){
-        return (result + store[target/3]*(store[target/3]-1) * (store[target/3]-2)/6)%(Math.pow(10,9)+7);
-    }
-    return result%(Math.pow(10,9)+7);
-};
+    result = result + ((store[i] * (store[i] - 1)) / 2) * store[target - 2 * i]
+  }
+  if (target % 3 === 0) {
+    return (
+      (result +
+        (store[target / 3] *
+          (store[target / 3] - 1) *
+          (store[target / 3] - 2)) /
+          6) %
+      (Math.pow(10, 9) + 7)
+    )
+  }
+  return result % (Math.pow(10, 9) + 7)
+}
 ```
 
 ### 2019.5.28

@@ -1,3 +1,83 @@
+### 2019.6.6
+
+给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
+
+说明：
+
+拆分时可以重复使用字典中的单词。
+你可以假设字典中没有重复的单词。
+
+**示例 1**：
+
+```
+输入: s = "leetcode", wordDict = ["leet", "code"]
+输出: true
+解释: 返回 true 因为 "leetcode" 可以被拆分成 "leet code"。
+```
+**示例 2**：
+
+```
+输入: s = "applepenapple", wordDict = ["apple", "pen"]
+输出: true
+解释: 返回 true 因为 "applepenapple" 可以被拆分成 "apple pen apple"。
+     注意你可以重复使用字典中的单词。
+```
+**示例 3**：
+
+```
+输入: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+输出: false
+```
+
+> 我的答案（超时）❌
+
+```js
+var wordBreak = function(s, wordDict) {
+  if (!s) return true
+  return wordDict.some(word => {
+    const index = s.indexOf(word)
+    if (index !== -1) {
+      return (
+        wordBreak(s.substring(0, index), wordDict) &&
+        wordBreak(s.substring(index + word.length, s.length), wordDict)
+      )
+    }
+  })
+}
+```
+
+> 优秀答案（背包问题、动态规划）
+
+```js
+var wordBreak = function(s, wordDict) {
+    //dictiong代表s长度为多少的时候，能不能满足条件
+  let diction = new Array(s.length + 1);
+  diction[0] = true;
+  for (let i = 0; i < s.length; i++) {
+    let son_str = s.substring(0,i+1);//长度从1到str.lenth一遍一遍来
+    //如果本身可以匹配，直接打true;
+    if(wordDict.indexOf(son_str) != -1){
+      diction[i+1] = true;
+      continue;
+    }
+    //对son_str进行遍历，分成两半，如果前一半满足，后一半满足，就可以满足
+    //前一半是0到j,后一半是,j到son_str.length-1;
+    for(let j=0; j<son_str.length;j++){
+      let right_son_str = son_str.substring(j+1,i+1);//长度从1到str.lenth一遍一遍来
+      if(diction[j+1] && (wordDict.indexOf(right_son_str) != -1)){
+        diction[i+1] = true;
+      }
+    }
+  }
+  
+  // console.log("dayin",diction); 
+    if(null == diction[s.length]){
+        return false;
+    }
+  return diction[s.length];
+};
+```
+
 ### 2019.6.5
 
 给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。

@@ -1,3 +1,138 @@
+### 2019.6.12
+
+给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，在字符串中增加空格来构建一个句子，使得句子中所有的单词都在词典中。返回所有这些可能的句子。
+
+说明：
+
+- 分隔时可以重复使用字典中的单词。
+- 你可以假设字典中没有重复的单词。
+
+**示例 1**：
+
+```
+输入:
+s = "catsanddog"
+wordDict = ["cat", "cats", "and", "sand", "dog"]
+输出:
+[
+  "cats and dog",
+  "cat sand dog"
+]
+```
+
+**示例 2**：
+
+```
+输入:
+s = "pineapplepenapple"
+wordDict = ["apple", "pen", "applepen", "pine", "pineapple"]
+输出:
+[
+  "pine apple pen apple",
+  "pineapple pen apple",
+  "pine applepen apple"
+]
+解释: 注意你可以重复使用字典中的单词。
+```
+
+**示例 3**：
+
+```
+输入:
+s = "catsandog"
+wordDict = ["cats", "dog", "sand", "and", "cat"]
+输出:
+[]
+```
+
+> 我的答案（看了提示，使用上一题判断能否分割再分）
+
+```js
+var wordBreak = function(s, wordDict) {
+  let arr = []
+  if (!canWordBreak(s, wordDict)) {
+    return arr
+  }
+  for (let i = 1; i <= s.length; i++) {
+    const position = wordDict.indexOf(s.substr(0, i))
+    if (position > -1) {
+      if (i === s.length) {
+        arr.push(s)
+        break
+      }
+
+      const list = wordBreak(s.substr(i, s.length), wordDict)
+
+      list.forEach(res => {
+        const resultArr = s.substr(0, i) + ' ' + res
+        arr.push(resultArr)
+      })
+    }
+  }
+  return arr
+}
+
+function canWordBreak(s, wordDict) {
+  let diction = new Array(s.length + 1)
+  diction[0] = true
+  for (let i = 0; i < s.length; i++) {
+    let son_str = s.substring(0, i + 1) //长度从1到str.lenth一遍一遍来
+    if (wordDict.indexOf(son_str) != -1) {
+      diction[i + 1] = true
+      continue
+    }
+    for (let j = 0; j < son_str.length; j++) {
+      let right_son_str = son_str.substring(j + 1, i + 1) //长度从1到str.lenth一遍一遍来
+      if (diction[j + 1] && wordDict.indexOf(right_son_str) != -1) {
+        diction[i + 1] = true
+      }
+    }
+  }
+
+  if (null == diction[s.length]) {
+    return false
+  }
+  return diction[s.length]
+}
+```
+
+> 优秀答案
+
+```js
+var wordBreak = function(s, wordDict, map) {
+  let res = []
+  
+  if (!map) {
+    map = new Map()
+  }
+
+  if (map.has(s)) {
+    return map.get(s)
+  }
+
+  if (s.length === 0) {
+    map.set(s, [])
+    return []
+  }
+
+  for (let word of wordDict) {
+    let index = s.indexOf(word)
+
+    if (index === 0) {
+      let substr = s.slice(word.length)
+      let subRes = wordBreak(substr, wordDict, map)
+
+      subRes.length === 0 && substr.length === 0
+        ? res.push(word)
+        : subRes.forEach(newWord => res.push(word + ' ' + newWord))
+    }
+  }
+
+  map.set(s, res)
+  return res
+};
+```
+
 ### 2019.6.6
 
 给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，判定 s 是否可以被空格拆分为一个或多个在字典中出现的单词。
@@ -14,6 +149,7 @@
 输出: true
 解释: 返回 true 因为 "leetcode" 可以被拆分成 "leet code"。
 ```
+
 **示例 2**：
 
 ```
@@ -22,6 +158,7 @@
 解释: 返回 true 因为 "applepenapple" 可以被拆分成 "apple pen apple"。
      注意你可以重复使用字典中的单词。
 ```
+
 **示例 3**：
 
 ```
@@ -50,32 +187,32 @@ var wordBreak = function(s, wordDict) {
 
 ```js
 var wordBreak = function(s, wordDict) {
-    //dictiong代表s长度为多少的时候，能不能满足条件
-  let diction = new Array(s.length + 1);
-  diction[0] = true;
+  //dictiong代表s长度为多少的时候，能不能满足条件
+  let diction = new Array(s.length + 1)
+  diction[0] = true
   for (let i = 0; i < s.length; i++) {
-    let son_str = s.substring(0,i+1);//长度从1到str.lenth一遍一遍来
+    let son_str = s.substring(0, i + 1) //长度从1到str.lenth一遍一遍来
     //如果本身可以匹配，直接打true;
-    if(wordDict.indexOf(son_str) != -1){
-      diction[i+1] = true;
-      continue;
+    if (wordDict.indexOf(son_str) != -1) {
+      diction[i + 1] = true
+      continue
     }
     //对son_str进行遍历，分成两半，如果前一半满足，后一半满足，就可以满足
     //前一半是0到j,后一半是,j到son_str.length-1;
-    for(let j=0; j<son_str.length;j++){
-      let right_son_str = son_str.substring(j+1,i+1);//长度从1到str.lenth一遍一遍来
-      if(diction[j+1] && (wordDict.indexOf(right_son_str) != -1)){
-        diction[i+1] = true;
+    for (let j = 0; j < son_str.length; j++) {
+      let right_son_str = son_str.substring(j + 1, i + 1) //长度从1到str.lenth一遍一遍来
+      if (diction[j + 1] && wordDict.indexOf(right_son_str) != -1) {
+        diction[i + 1] = true
       }
     }
   }
-  
-  // console.log("dayin",diction); 
-    if(null == diction[s.length]){
-        return false;
-    }
-  return diction[s.length];
-};
+
+  // console.log("dayin",diction);
+  if (null == diction[s.length]) {
+    return false
+  }
+  return diction[s.length]
+}
 ```
 
 ### 2019.6.5
@@ -104,22 +241,22 @@ var wordBreak = function(s, wordDict) {
 
 ```js
 function isPalindrome(s, start, end) {
-  if (start > end) return false;
+  if (start > end) return false
   while (start < end) {
-    const c1 = s.charCodeAt(start);
-    const c2 = s.charCodeAt(end);
+    const c1 = s.charCodeAt(start)
+    const c2 = s.charCodeAt(end)
     if (
       c1 === c2 ||
       (c1 - c2 === 32 && c2 >= 65 && c2 <= 90) ||
       (c2 - c1 === 32 && c1 >= 65 && c1 <= 90)
     ) {
-      start++;
-      end--;
+      start++
+      end--
     } else {
-      return false;
+      return false
     }
   }
-  return true;
+  return true
 }
 
 /*
@@ -132,31 +269,31 @@ function isPalindrome(s, start, end) {
  * @return {string[][]}
  */
 var partition = function(s) {
-  const result = [];
-  const ll = [];
+  const result = []
+  const ll = []
   // Solution1(s, 0, result, ll);
-  return Solution2(s);
-};
+  return Solution2(s)
+}
 
 function Solution2(s) {
   if (s.length === 0) {
-    return [[]];
+    return [[]]
   }
   if (s.length === 1) {
-    return [[s[0]]];
+    return [[s[0]]]
   }
-  const results = [];
+  const results = []
   for (let i = 0; i < s.length; i++) {
     if (isPalindrome(s, 0, i)) {
-      const pre = s.slice(0, i + 1);
-      const afterResults = Solution2(s.slice(i + 1));
+      const pre = s.slice(0, i + 1)
+      const afterResults = Solution2(s.slice(i + 1))
       for (const after of afterResults) {
-        after.unshift(pre);
-        results.push(after);
+        after.unshift(pre)
+        results.push(after)
       }
     }
   }
-  return results;
+  return results
 }
 ```
 

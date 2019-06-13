@@ -22,7 +22,7 @@ trie.search("app");     // 返回 true
 
 ![image](https://user-images.githubusercontent.com/18693417/59399028-0b598280-8dc5-11e9-8702-dc20471cb5a5.png)
 
-> 我的答案（看了提示，使用上一题判断能否分割再分）
+> 我的答案
 
 ```js
 /**

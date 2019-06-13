@@ -1,3 +1,163 @@
+### 2019.6.13
+
+实现一个 Trie (前缀树)，包含 insert, search, 和 startsWith 这三个操作。
+
+**示例**：
+
+```
+Trie trie = new Trie();
+
+trie.insert("apple");
+trie.search("apple");   // 返回 true
+trie.search("app");     // 返回 false
+trie.startsWith("app"); // 返回 true
+trie.insert("app");
+trie.search("app");     // 返回 true
+```
+
+**说明**:
+
+- 你可以假设所有的输入都是由小写字母 a-z 构成的。
+- 保证所有输入均为非空字符串。
+
+![image](https://user-images.githubusercontent.com/18693417/59399028-0b598280-8dc5-11e9-8702-dc20471cb5a5.png)
+
+> 我的答案（看了提示，使用上一题判断能否分割再分）
+
+```js
+/**
+ * Initialize your data structure here.
+ */
+var Trie = function() {
+  this.map = new Map()
+}
+
+/**
+ * Inserts a word into the trie.
+ * @param {string} word
+ * @return {void}
+ */
+Trie.prototype.insert = function(word) {
+  this.map.set(word, true)
+}
+
+/**
+ * Returns if the word is in the trie.
+ * @param {string} word
+ * @return {boolean}
+ */
+Trie.prototype.search = function(word) {
+  return this.map.has(word)
+}
+
+/**
+ * Returns if there is any word in the trie that starts with the given prefix.
+ * @param {string} prefix
+ * @return {boolean}
+ */
+Trie.prototype.startsWith = function(prefix) {
+  for (const key of this.map.keys()) {
+    if (prefix === key.substr(0, prefix.length)) return true
+  }
+  return false
+}
+```
+
+> 优秀答案
+
+```js
+class TrieNode {
+  constructor(char) {
+    this.children = {}
+    this.isWord = false
+    this.char = char
+  }
+}
+
+class Trie {
+  constructor() {
+    this.root = new TrieNode()
+  }
+
+  /**
+   * Inserts a word into the trie.
+   * @param {string} word
+   * @return {void}
+   */
+  insert(word) {
+    let level = 0,
+      depth = word.length,
+      children = this.root.children,
+      char,
+      child
+
+    while (level < depth) {
+      char = word[level++]
+      child = children[char] = children[char] || new TrieNode(char)
+      children = child.children
+    }
+
+    child.isWord = true
+  }
+
+  /**
+   * Returns if the word is in the trie.
+   * @param {string} word
+   * @return {boolean}
+   */
+  search(word) {
+    let level = 0,
+      depth = word.length,
+      children = this.root.children,
+      char,
+      child
+
+    while (level < depth) {
+      char = word[level]
+      child = children[char]
+
+      if (!child) {
+        return false
+      } else {
+        children = child.children
+      }
+
+      level++
+    }
+
+    return child.isWord
+  }
+
+  /**
+   * Returns if there is any word in the trie that starts with the given prefix.
+   * @param {string} prefix
+   * @return {boolean}
+   */
+  startsWith(prefix) {
+    let level = 0,
+      depth = prefix.length,
+      children = this.root.children,
+      char,
+      child
+
+    while (level < depth) {
+      char = prefix[level]
+      child = children[char]
+
+      if (!child) {
+        return false
+      } else {
+        children = child.children
+      }
+
+      level++
+    }
+
+    return true
+  }
+}
+```
+
 ### 2019.6.12
 
 给定一个非空字符串 s 和一个包含非空单词列表的字典 wordDict，在字符串中增加空格来构建一个句子，使得句子中所有的单词都在词典中。返回所有这些可能的句子。
@@ -101,7 +261,7 @@ function canWordBreak(s, wordDict) {
 ```js
 var wordBreak = function(s, wordDict, map) {
   let res = []
-  
+
   if (!map) {
     map = new Map()
   }
@@ -130,7 +290,7 @@ var wordBreak = function(s, wordDict, map) {
 
   map.set(s, res)
   return res
-};
+}
 ```
 
 ### 2019.6.6

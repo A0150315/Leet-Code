@@ -1,3 +1,139 @@
+### 2019.6.17
+
+给定一个二维网格 board 和一个字典中的单词列表 words，找出所有同时在二维网格和字典中出现的单词。
+
+单词必须按照字母顺序，通过相邻的单元格内的字母构成，其中“相邻”单元格是那些水平相邻或垂直相邻的单元格。同一个单元格内的字母在一个单词中不允许被重复使用。
+
+**示例**：
+
+```
+输入: 
+words = ["oath","pea","eat","rain"] and board =
+[
+  ['o','a','a','n'],
+  ['e','t','a','e'],
+  ['i','h','k','r'],
+  ['i','f','l','v']
+]
+
+输出: ["eat","oath"]
+```
+
+**说明**:
+你可以假设所有输入都由小写字母 a-z 组成。
+
+**提示**:
+- 你需要优化回溯算法以通过更大数据量的测试。你能否早点停止回溯？
+- 如果当前单词不存在于所有单词的前缀中，则可以立即停止回溯。什么样的数据结构可以有效地执行这样的操作？散列表是否可行？为什么？ 前缀树如何？如果你想学习如何实现一个基本的前缀树，请先查看这个问题： 实现Trie（前缀树）。
+
+> 我的答案(真不会)
+
+```js
+```
+
+> 优秀答案
+
+```js
+var findWords = function(board, words) {
+    if(!board.length) {
+        return [];
+    }
+    const [R, C] = [board.length, board[0].length];
+    const trie = new Trie();
+    for(const word of words) {
+        trie.insert(word);
+    }
+    const set = new Set();
+    
+    const dfs = (r, c, trieNode = trie) => {
+        if(r < 0 || r >= R || c < 0 || c >= C || board[r][c] === null) {
+            return;
+        }
+        const ch = board[r][c];
+        if(!trieNode.link.has(ch)) {
+            return;
+        }
+        trieNode = trieNode.link.get(ch);
+        if(trieNode.word !== null) {
+            set.add(trieNode.word);
+        }
+        board[r][c] = null;
+        dfs(r - 1, c, trieNode);
+        dfs(r + 1, c, trieNode);
+        dfs(r, c - 1, trieNode);
+        dfs(r, c + 1, trieNode);
+        board[r][c] = ch;
+    };
+    for(let r = 0; r < R; r++) {
+        for(let c = 0; c < C; c++) {
+            dfs(r, c);
+        }
+    }
+    return [...set];
+};
+
+/**
+ * Initialize your data structure here.
+ */
+var Trie = function() {
+    this.link = new Map();
+    this.isEnd = false;
+    this.word = null;
+};
+
+/**
+ * Inserts a word into the trie. 
+ * @param {string} word
+ * @return {void}
+ */
+Trie.prototype.insert = function(word) {
+    let node = this;
+    for(let i = 0; i < word.length; i++) {
+        const ch = word[i];
+        if(!node.link.has(ch)) {
+            node.link.set(ch, new Trie());
+        }
+        node = node.link.get(ch);
+    }
+    node.word = word;
+    node.isEnd = true;
+};
+
+/**
+ * Returns if the word is in the trie. 
+ * @param {string} word
+ * @return {boolean}
+ */
+Trie.prototype.search = function(word) {
+    let node = this;
+    for(let i = 0; i < word.length; i++) {
+        const ch = word[i];
+        if(!node.link.has(ch)) {
+            return false;
+        }
+        node = node.link.get(ch);
+    }
+    return node.isEnd;
+};
+
+/**
+ * Returns if there is any word in the trie that starts with the given prefix. 
+ * @param {string} prefix
+ * @return {boolean}
+ */
+Trie.prototype.startsWith = function(prefix) {
+    let node = this;
+    for(let i = 0; i < prefix.length; i++) {
+        const ch = prefix[i];
+        if(!node.link.has(ch)) {
+            return false;
+        }
+        node = node.link.get(ch);
+    }
+    return !!node;
+};
+```
+
 ### 2019.6.13
 
 实现一个 Trie (前缀树)，包含 insert, search, 和 startsWith 这三个操作。

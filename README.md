@@ -1,3 +1,58 @@
+### 2019.6.18
+
+给定一个整数数组 nums ，找出一个序列中乘积最大的连续子序列（该序列至少包含一个数）。
+
+**示例 1**：
+
+```
+输入: [2,3,-2,4]
+输出: 6
+解释: 子数组 [2,3] 有最大乘积 6。
+```
+
+**示例 2**：
+
+```
+输入: [-2,0,-1]
+输出: 0
+解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
+```
+
+> 我的答案(超时)❌
+
+```js
+  let max = nums[0]
+  for (let i = 0; i < nums.length; i++) {
+    for (let j = i + 1; j <= nums.length; j++) {
+      const sum = nums.slice(i, j).reduce((a, b) => a * b)
+      if ((!max && max !== 0) || sum > max) max = sum
+    }
+  }
+  return max
+```
+
+> 优秀答案
+
+```js
+// 或参考文件 152.js
+var maxProduct = function(nums) {
+     let max = -Infinity, 
+    imax = 1, imin = 1; // 保存最大和最小值
+    for(let i = 0; i < nums.length; ++i){
+        if(nums[i] < 0){
+            let tmp = imax
+            imax = imin
+            imin = tmp
+        }
+        imax = Math.max(imax*nums[i], nums[i])
+        imin = Math.min(imin*nums[i], nums[i])
+
+        max = Math.max(max, imax)
+    }
+    return max
+};
+```
+
 ### 2019.6.17
 
 给定一个二维网格 board 和一个字典中的单词列表 words，找出所有同时在二维网格和字典中出现的单词。

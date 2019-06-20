@@ -1,9 +1,52 @@
 ### 2019.6.19
 
+给定长度为 n 的整数数组 nums，其中 n > 1，返回输出数组 output ，其中 output[i] 等于 nums 中除 nums[i] 之外其余各元素的乘积。
+
+**示例**：
+
+```
+输入: [1,2,3,4]
+输出: [24,12,8,6]
+```
+
+**说明**: 请不要使用**除法**，且在 O(n) 时间复杂度内完成此题。
+
+**进阶**：
+你可以在常数空间复杂度内完成这个题目吗？（ 出于对空间复杂度分析的目的，输出数组不被视为额外空间。）
+
+> 我的答案 ❌
+
+```js
+// 没有思路
+```
+
+> 优秀答案
+
+```js
+var productExceptSelf = function(nums) {
+    let res = []
+    
+    for(let i =0,t = 1;i<nums.length;i++){
+        res[i] =t
+        t *= nums[i]
+    }
+    
+    for(let i = nums.length-1,t =1;i>=0;i--){
+        res[i] *= t
+        t *=nums[i]
+        
+    }
+    return res
+};
+```
+
+### 2019.6.19
+
 给定一个未排序的数组，判断这个数组中是否存在长度为 3 的递增子序列。
 
 数学表达式如下:
-> 如果存在这样的 i, j, k,  且满足 0 ≤ i < j < k ≤ n-1，
+
+> 如果存在这样的 i, j, k, 且满足 0 ≤ i < j < k ≤ n-1，
 
 > 使得 arr[i] < arr[j] < arr[k] ，返回 true ; 否则返回 false 。
 
@@ -23,7 +66,7 @@
 输出: false
 ```
 
-> 我的答案❌
+> 我的答案 ❌
 
 ```js
 。。。
@@ -82,14 +125,14 @@ var increasingTriplet = function(nums) {
 > 我的答案(超时)❌
 
 ```js
-  let max = nums[0]
-  for (let i = 0; i < nums.length; i++) {
-    for (let j = i + 1; j <= nums.length; j++) {
-      const sum = nums.slice(i, j).reduce((a, b) => a * b)
-      if ((!max && max !== 0) || sum > max) max = sum
-    }
+let max = nums[0]
+for (let i = 0; i < nums.length; i++) {
+  for (let j = i + 1; j <= nums.length; j++) {
+    const sum = nums.slice(i, j).reduce((a, b) => a * b)
+    if ((!max && max !== 0) || sum > max) max = sum
   }
-  return max
+}
+return max
 ```
 
 > 优秀答案
@@ -97,21 +140,22 @@ var increasingTriplet = function(nums) {
 ```js
 // 或参考文件 152.js
 var maxProduct = function(nums) {
-     let max = -Infinity, 
-    imax = 1, imin = 1; // 保存最大和最小值
-    for(let i = 0; i < nums.length; ++i){
-        if(nums[i] < 0){
-            let tmp = imax
-            imax = imin
-            imin = tmp
-        }
-        imax = Math.max(imax*nums[i], nums[i])
-        imin = Math.min(imin*nums[i], nums[i])
-
-        max = Math.max(max, imax)
+  let max = -Infinity,
+    imax = 1,
+    imin = 1 // 保存最大和最小值
+  for (let i = 0; i < nums.length; ++i) {
+    if (nums[i] < 0) {
+      let tmp = imax
+      imax = imin
+      imin = tmp
     }
-    return max
-};
+    imax = Math.max(imax * nums[i], nums[i])
+    imin = Math.min(imin * nums[i], nums[i])
+
+    max = Math.max(max, imax)
+  }
+  return max
+}
 ```
 
 ### 2019.6.17
@@ -123,7 +167,7 @@ var maxProduct = function(nums) {
 **示例**：
 
 ```
-输入: 
+输入:
 words = ["oath","pea","eat","rain"] and board =
 [
   ['o','a','a','n'],
@@ -139,8 +183,9 @@ words = ["oath","pea","eat","rain"] and board =
 你可以假设所有输入都由小写字母 a-z 组成。
 
 **提示**:
+
 - 你需要优化回溯算法以通过更大数据量的测试。你能否早点停止回溯？
-- 如果当前单词不存在于所有单词的前缀中，则可以立即停止回溯。什么样的数据结构可以有效地执行这样的操作？散列表是否可行？为什么？ 前缀树如何？如果你想学习如何实现一个基本的前缀树，请先查看这个问题： 实现Trie（前缀树）。
+- 如果当前单词不存在于所有单词的前缀中，则可以立即停止回溯。什么样的数据结构可以有效地执行这样的操作？散列表是否可行？为什么？ 前缀树如何？如果你想学习如何实现一个基本的前缀树，请先查看这个问题： 实现 Trie（前缀树）。
 
 > 我的答案(真不会)
 
@@ -151,103 +196,103 @@ words = ["oath","pea","eat","rain"] and board =
 
 ```js
 var findWords = function(board, words) {
-    if(!board.length) {
-        return [];
+  if (!board.length) {
+    return []
+  }
+  const [R, C] = [board.length, board[0].length]
+  const trie = new Trie()
+  for (const word of words) {
+    trie.insert(word)
+  }
+  const set = new Set()
+
+  const dfs = (r, c, trieNode = trie) => {
+    if (r < 0 || r >= R || c < 0 || c >= C || board[r][c] === null) {
+      return
     }
-    const [R, C] = [board.length, board[0].length];
-    const trie = new Trie();
-    for(const word of words) {
-        trie.insert(word);
+    const ch = board[r][c]
+    if (!trieNode.link.has(ch)) {
+      return
     }
-    const set = new Set();
-    
-    const dfs = (r, c, trieNode = trie) => {
-        if(r < 0 || r >= R || c < 0 || c >= C || board[r][c] === null) {
-            return;
-        }
-        const ch = board[r][c];
-        if(!trieNode.link.has(ch)) {
-            return;
-        }
-        trieNode = trieNode.link.get(ch);
-        if(trieNode.word !== null) {
-            set.add(trieNode.word);
-        }
-        board[r][c] = null;
-        dfs(r - 1, c, trieNode);
-        dfs(r + 1, c, trieNode);
-        dfs(r, c - 1, trieNode);
-        dfs(r, c + 1, trieNode);
-        board[r][c] = ch;
-    };
-    for(let r = 0; r < R; r++) {
-        for(let c = 0; c < C; c++) {
-            dfs(r, c);
-        }
+    trieNode = trieNode.link.get(ch)
+    if (trieNode.word !== null) {
+      set.add(trieNode.word)
     }
-    return [...set];
-};
+    board[r][c] = null
+    dfs(r - 1, c, trieNode)
+    dfs(r + 1, c, trieNode)
+    dfs(r, c - 1, trieNode)
+    dfs(r, c + 1, trieNode)
+    board[r][c] = ch
+  }
+  for (let r = 0; r < R; r++) {
+    for (let c = 0; c < C; c++) {
+      dfs(r, c)
+    }
+  }
+  return [...set]
+}
 
 /**
  * Initialize your data structure here.
  */
 var Trie = function() {
-    this.link = new Map();
-    this.isEnd = false;
-    this.word = null;
-};
+  this.link = new Map()
+  this.isEnd = false
+  this.word = null
+}
 
 /**
- * Inserts a word into the trie. 
+ * Inserts a word into the trie.
  * @param {string} word
  * @return {void}
  */
 Trie.prototype.insert = function(word) {
-    let node = this;
-    for(let i = 0; i < word.length; i++) {
-        const ch = word[i];
-        if(!node.link.has(ch)) {
-            node.link.set(ch, new Trie());
-        }
-        node = node.link.get(ch);
+  let node = this
+  for (let i = 0; i < word.length; i++) {
+    const ch = word[i]
+    if (!node.link.has(ch)) {
+      node.link.set(ch, new Trie())
     }
-    node.word = word;
-    node.isEnd = true;
-};
+    node = node.link.get(ch)
+  }
+  node.word = word
+  node.isEnd = true
+}
 
 /**
- * Returns if the word is in the trie. 
+ * Returns if the word is in the trie.
  * @param {string} word
  * @return {boolean}
  */
 Trie.prototype.search = function(word) {
-    let node = this;
-    for(let i = 0; i < word.length; i++) {
-        const ch = word[i];
-        if(!node.link.has(ch)) {
-            return false;
-        }
-        node = node.link.get(ch);
+  let node = this
+  for (let i = 0; i < word.length; i++) {
+    const ch = word[i]
+    if (!node.link.has(ch)) {
+      return false
     }
-    return node.isEnd;
-};
+    node = node.link.get(ch)
+  }
+  return node.isEnd
+}
 
 /**
- * Returns if there is any word in the trie that starts with the given prefix. 
+ * Returns if there is any word in the trie that starts with the given prefix.
  * @param {string} prefix
  * @return {boolean}
  */
 Trie.prototype.startsWith = function(prefix) {
-    let node = this;
-    for(let i = 0; i < prefix.length; i++) {
-        const ch = prefix[i];
-        if(!node.link.has(ch)) {
-            return false;
-        }
-        node = node.link.get(ch);
+  let node = this
+  for (let i = 0; i < prefix.length; i++) {
+    const ch = prefix[i]
+    if (!node.link.has(ch)) {
+      return false
     }
-    return !!node;
-};
+    node = node.link.get(ch)
+  }
+  return !!node
+}
 ```
 
 ### 2019.6.13
@@ -920,6 +965,10 @@ var threeSumMulti = function(A, target) {
   [18, 21, 23, 26, 30]
 ]
 ```
+
+给定 target = 5，返回 true。
+
+给定 target = 20，返回 false。
 
 > 我的答案（错误答案(128/129 cases passed)）
 

@@ -1,3 +1,48 @@
+### 2019.7.9
+
+#### 887. 鸡蛋掉落解析
+
+转载自：鸡蛋掉落详解 Super Egg Drop - Shellbye - GitHub
+https://github.com/Shellbye/Shellbye.github.io/issues/42
+
+##### 暴力解法（性能极差）
+首先，我们来看扔鸡蛋这个事儿本身，假设在N层的高楼中有K个鸡蛋，这个时候我们在n层扔了一个鸡蛋，那么这一次动作，把整个高楼其实就分成了两部分，一部分是1楼到n楼，这是一个层高为n的新楼，我们暂时叫它一号楼；另一部分是n+1到N楼，这是一栋新产生的层高为N-(n+1)+1=N-n的新楼，我们叫他二号楼。
+然后，我们来看刚扔下去的鸡蛋，如果它碎了，说明楼层太高（起码高于F），那么F应该是在一号楼，那么我们就带着剩下的K-1个鸡蛋去一号楼继续，当我们站在一号楼的某一层的时候，其实和最开始是一样的（递归的信号）。如果鸡蛋没碎，说明楼层不够高（低于F），此时我们要去二号楼，但是这里有一点点需要注意的，就是我们在二号楼的某一层的时候，其实该层在原始的楼里是要比当前楼层高n层的，其他同理。
+最后，因为我们是要找无论 F 的初始值如何的条件下的查找次数，所以我们要在一号楼和二号楼各自的查找次数中选择那个最大的值，用计算机语言描述整个过程，就是
+
+> searchTime(K, N) = max( searchTime(K-1, X-1), searchTime(K, N-X) )
+
+其中的X就是我们刚才扔鸡蛋做在的楼层，它具体是哪一层并不重要。对于从1到N的每一个X，都可以计算出一个对应的searchTime的值，在这N个值中，最小的那个就是本题的答案了！
+
+```java
+// 算出每层楼所需要扔的次数 这种解法绝对超时
+class Solution {
+    public int superEggDrop(int K, int N) {
+        return Solution.recursive(K, N);
+    }
+    
+    public static int recursive(int K, int N) {
+        if (N == 0 || N == 1 || K == 1) {
+            return N;
+        }
+
+        int minimun = N;
+        for (int i = 1; i <= N; i++) {
+            int tMin = Math.max(Solution.recursive(K - 1, i - 1), Solution.recursive(K, N - i));
+            // 加一是把这次扔的加上
+            minimun = Math.min(minimun, 1 + tMin);
+        }
+        return minimun;
+    }
+}
+```
+
+上面的这个方法有多暴力呢？通过推导式我们发现它和斐波那契数列第N项的计算方法（Fib(n) = Fib(n-1) + Fib(n-2)）类似，那么，这个东西的时间复杂度又怎么计算呢？对于第N项 Fib(n) = Fib(n-1) + Fib(n-2)，这个计算本身就是一个加法，其时间复杂度是O(1)，但是其中包含了第N-1和第N-2两项，他们又同理本身需要一个O(1)，且也分别包含了第N-1-1、第N-1-2和第N-2-1、第N-2-2四项，以此类推，这就是一个满二叉树的节点总数求和（如图），即O(2^n)，同样的，其空间复杂度很低，仅仅是O(1)。
+
+![image](https://user-images.githubusercontent.com/18693417/60868042-b3e0f200-a25e-11e9-8155-54e976a28b2e.png)
+
+未完
+
 ### 2019.7.8
 
 #### 240. 搜索二维矩阵 II解析

@@ -41,6 +41,40 @@ class Solution {
 
 ![image](https://user-images.githubusercontent.com/18693417/60868042-b3e0f200-a25e-11e9-8155-54e976a28b2e.png)
 
+
+##### 空间换时间解法（性能还是比较差）
+上面的计算之所以时间复杂度高，与递归版本的斐波那契数列一样，就是因为重复计算了很多遍底部节点的值，为了加快这个计算过程，一个简单的提升方法就是拿空间换时间，把计算的中间结果都存储起来，后面直接查表即可。
+
+```js
+var superEggDrop = function (K, N) {
+    let arr = (new Array(K+1))
+    for(let i =1;i<=N;i++){ // 1个鸡蛋或者0个鸡蛋的值
+        if(!arr[0])arr[0]=[]
+        arr[0][i]=0;
+        if(!arr[1])arr[1]=[]
+        arr[1][i]=i;
+    }
+    for(let i=0;i<=K;i++){ // 0层的值
+        if(!arr[i])arr[i]=[]
+        arr[i][0]=0;
+    }
+    for(let i=2;i<=K;i++){
+        for(let j=1;j<=N;j++){ // 计算j层的值
+            let minTimes = N*N; // 储存的最小次数
+            for(let k=1;k<=j;k++){ // 计算j层中，每一层所需要扔的值
+                // 实际上这里就是把一栋楼拆分开来，每次都把分开的其中一栋楼计算次数
+                minTimes = Math.min(minTimes,1+Math.max(arr[i-1][k-1],arr[i][j-k])) 
+            }
+            arr[i][j]=minTimes
+        }
+    }
+    return arr[K][N]
+
+};
+```
+
+这个解法利用了一个二维数组存储了部分计算结果（空间复杂度O(KN)），使得时间复杂度降低到了O(KN^2)。但是依然是一个平方级别的时间复杂度，不够快，还能优化吗？
+
 未完
 
 ### 2019.7.8

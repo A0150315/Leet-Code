@@ -1,14 +1,135 @@
-### 2019.8.20(数组中的第K个最大元素)
+### 2019.8.20(数据流的中位数)
+
+中位数是有序列表中间的数。如果列表长度是偶数，中位数则是中间两个数的平均值。
+
+例如，
+
+[2,3,4] 的中位数是 3
+
+[2,3] 的中位数是 (2 + 3) / 2 = 2.5
+
+设计一个支持以下两种操作的数据结构：
+
+- void addNum(int num) - 从数据流中添加一个整数到数据结构中。
+- double findMedian() - 返回目前所有元素的中位数。
+
+**示例:**
+
+```
+addNum(1)
+addNum(2)
+findMedian() -> 1.5
+addNum(3)
+findMedian() -> 2
+```
+
+> 我的答案
+
+```js
+var MedianFinder = function() {
+  this.arr = []
+  this.isOdd = false
+}
+
+/**
+ * @param {number} num
+ * @return {void}
+ */
+MedianFinder.prototype.addNum = function(num) {
+  const index = this.getInsertIndex(num)
+  this.isOdd = !this.isOdd
+  this.arr = [
+    ...this.arr.slice(0, index),
+    num,
+    ...this.arr.slice(index, this.arr.length)
+  ]
+}
+
+/**
+ * @return {number}
+ */
+MedianFinder.prototype.findMedian = function() {
+  if (this.isOdd) return this.arr[parseInt('' + (this.arr.length - 1) / 2, 10)]
+  else {
+    const pivotA = Math.floor((this.arr.length - 1) / 2)
+    const pivotB = Math.ceil((this.arr.length - 1) / 2)
+    return (this.arr[pivotA] + this.arr[pivotB]) / 2
+  }
+}
+
+MedianFinder.prototype.getInsertIndex = function(num, startIndex = 0) {
+  if (this.arr.length === 0) return startIndex
+  if (this.arr.length === 1) return startIndex + (num > this.arr[0])
+  const mid = parseInt('' + (this.arr.length - 1) / 2, 10)
+  if (num > this.arr[mid]) {
+    const index = this.getInsertIndex.call(
+      {
+        arr: this.arr.slice(mid + 1, this.arr.length),
+        getInsertIndex: this.getInsertIndex
+      },
+      num,
+      mid + 1 + startIndex
+    )
+    return index
+  } else if (num <= this.arr[mid]) {
+    const index = this.getInsertIndex.call(
+      { arr: this.arr.slice(0, mid + 1), getInsertIndex: this.getInsertIndex },
+      num,
+      startIndex
+    )
+    return index
+  }
+}
+```
+
+> 优秀答案
+
+```js
+var MedianFinder = function() {
+  this.data = []
+}
+
+MedianFinder.prototype.addNum = function(num) {
+  const bs = n => {
+    let start = 0
+    let end = this.data.length
+    while (start < end) {
+      let mid = Math.floor((start + end) / 2)
+      if (n > this.data[mid]) start = mid + 1
+      else end = mid
+    }
+    this.data.splice(start, 0, n)
+  }
+  if (this.data.length === 0) this.data.push(num)
+  else bs(num)
+}
+
+MedianFinder.prototype.findMedian = function() {
+  if (this.data.length % 2 === 0) {
+    return (
+      (this.data[parseInt(this.data.length / 2)] +
+        this.data[parseInt(this.data.length / 2) - 1]) /
+      2
+    )
+  } else {
+    return this.data[parseInt(this.data.length / 2)]
+  }
+}
+```
+
+### 2019.8.20(数组中的第 K 个最大元素)
 
 在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
 
 **示例 1:**
+
 ```
 输入: [3,2,1,5,6,4] 和 k = 2
 输出: 5
 ```
 
 **示例 2:**
+
 ```
 输入: [3,2,3,1,2,4,5,5,6] 和 k = 4
 输出: 4
@@ -35,42 +156,43 @@ var findKthLargest = function(nums, k) {
 
 ```js
 var findKthLargest = function(nums, k) {
-  let min = Math.min(...nums);
-  let max = Math.max(...nums);
-  const smallK = nums.length - k + 1;
+  let min = Math.min(...nums)
+  let max = Math.max(...nums)
+  const smallK = nums.length - k + 1
 
   while (min < max) {
-    const mid = Math.floor((min + max) / 2);
+    const mid = Math.floor((min + max) / 2)
 
     if (isKthLargest(mid, smallK, nums)) {
-      max = mid;
+      max = mid
     } else {
-      min = mid + 1;
+      min = mid + 1
     }
   }
 
-  return max;
-};
+  return max
+}
 
 function isKthLargest(target, k, nums) {
-  var count = 0;
+  var count = 0
   for (var i = 0; i < nums.length; i++) {
-    if (nums[i] <= target) count++;
+    if (nums[i] <= target) count++
   }
 
-  return count >= k;
+  return count >= k
 }
 ```
 
-### 2019.7.25 
+### 2019.7.25
 
 #### 回溯法 （131. 分割回文串）
 
-##### 概念 
+##### 概念
 
 回溯法（探索与回溯法）是一种选优搜索法，又称为试探法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。
 
 ##### 题目分析：
+
 先截取前一小部分，若是回文，则递归后面的字符串，根据计算出来的数组，把之前截取的字符串拼接到计算的数组中的其中一个结果上，形成新的数组。
 
 ### 2019.7.9
@@ -81,13 +203,14 @@ function isKthLargest(target, k, nums) {
 https://github.com/Shellbye/Shellbye.github.io/issues/42
 
 ##### 暴力解法（性能极差）
-首先，我们来看扔鸡蛋这个事儿本身，假设在N层的高楼中有K个鸡蛋，这个时候我们在n层扔了一个鸡蛋，那么这一次动作，把整个高楼其实就分成了两部分，一部分是1楼到n楼，这是一个层高为n的新楼，我们暂时叫它一号楼；另一部分是n+1到N楼，这是一栋新产生的层高为N-(n+1)+1=N-n的新楼，我们叫他二号楼。
-然后，我们来看刚扔下去的鸡蛋，如果它碎了，说明楼层太高（起码高于F），那么F应该是在一号楼，那么我们就带着剩下的K-1个鸡蛋去一号楼继续，当我们站在一号楼的某一层的时候，其实和最开始是一样的（递归的信号）。如果鸡蛋没碎，说明楼层不够高（低于F），此时我们要去二号楼，但是这里有一点点需要注意的，就是我们在二号楼的某一层的时候，其实该层在原始的楼里是要比当前楼层高n层的，其他同理。
+
+首先，我们来看扔鸡蛋这个事儿本身，假设在 N 层的高楼中有 K 个鸡蛋，这个时候我们在 n 层扔了一个鸡蛋，那么这一次动作，把整个高楼其实就分成了两部分，一部分是 1 楼到 n 楼，这是一个层高为 n 的新楼，我们暂时叫它一号楼；另一部分是 n+1 到 N 楼，这是一栋新产生的层高为 N-(n+1)+1=N-n 的新楼，我们叫他二号楼。
+然后，我们来看刚扔下去的鸡蛋，如果它碎了，说明楼层太高（起码高于 F），那么 F 应该是在一号楼，那么我们就带着剩下的 K-1 个鸡蛋去一号楼继续，当我们站在一号楼的某一层的时候，其实和最开始是一样的（递归的信号）。如果鸡蛋没碎，说明楼层不够高（低于 F），此时我们要去二号楼，但是这里有一点点需要注意的，就是我们在二号楼的某一层的时候，其实该层在原始的楼里是要比当前楼层高 n 层的，其他同理。
 最后，因为我们是要找无论 F 的初始值如何的条件下的查找次数，所以我们要在一号楼和二号楼各自的查找次数中选择那个最大的值，用计算机语言描述整个过程，就是
 
 > searchTime(K, N) = max( searchTime(K-1, X-1), searchTime(K, N-X) )
 
-其中的X就是我们刚才扔鸡蛋做在的楼层，它具体是哪一层并不重要。对于从1到N的每一个X，都可以计算出一个对应的searchTime的值，在这N个值中，最小的那个就是本题的答案了！
+其中的 X 就是我们刚才扔鸡蛋做在的楼层，它具体是哪一层并不重要。对于从 1 到 N 的每一个 X，都可以计算出一个对应的 searchTime 的值，在这 N 个值中，最小的那个就是本题的答案了！
 
 ```java
 // 算出每层楼所需要扔的次数 这种解法绝对超时
@@ -95,7 +218,7 @@ class Solution {
     public int superEggDrop(int K, int N) {
         return Solution.recursive(K, N);
     }
-    
+
     public static int recursive(int K, int N) {
         if (N == 0 || N == 1 || K == 1) {
             return N;
@@ -112,112 +235,119 @@ class Solution {
 }
 ```
 
-上面的这个方法有多暴力呢？通过推导式我们发现它和斐波那契数列第N项的计算方法（Fib(n) = Fib(n-1) + Fib(n-2)）类似，那么，这个东西的时间复杂度又怎么计算呢？对于第N项 Fib(n) = Fib(n-1) + Fib(n-2)，这个计算本身就是一个加法，其时间复杂度是O(1)，但是其中包含了第N-1和第N-2两项，他们又同理本身需要一个O(1)，且也分别包含了第N-1-1、第N-1-2和第N-2-1、第N-2-2四项，以此类推，这就是一个满二叉树的节点总数求和（如图），即O(2^n)，同样的，其空间复杂度很低，仅仅是O(1)。
+上面的这个方法有多暴力呢？通过推导式我们发现它和斐波那契数列第 N 项的计算方法（Fib(n) = Fib(n-1) + Fib(n-2)）类似，那么，这个东西的时间复杂度又怎么计算呢？对于第 N 项 Fib(n) = Fib(n-1) + Fib(n-2)，这个计算本身就是一个加法，其时间复杂度是 O(1)，但是其中包含了第 N-1 和第 N-2 两项，他们又同理本身需要一个 O(1)，且也分别包含了第 N-1-1、第 N-1-2 和第 N-2-1、第 N-2-2 四项，以此类推，这就是一个满二叉树的节点总数求和（如图），即 O(2^n)，同样的，其空间复杂度很低，仅仅是 O(1)。
 
 ![image](https://user-images.githubusercontent.com/18693417/60868042-b3e0f200-a25e-11e9-8155-54e976a28b2e.png)
 
-
 ##### 空间换时间解法（性能还是比较差）
+
 上面的计算之所以时间复杂度高，与递归版本的斐波那契数列一样，就是因为重复计算了很多遍底部节点的值，为了加快这个计算过程，一个简单的提升方法就是拿空间换时间，把计算的中间结果都存储起来，后面直接查表即可。
 
 ```js
-var superEggDrop = function (K, N) {
-    let arr = (new Array(K+1))
-    for(let i =1;i<=N;i++){ // 1个鸡蛋或者0个鸡蛋的值
-        if(!arr[0])arr[0]=[]
-        arr[0][i]=0;
-        if(!arr[1])arr[1]=[]
-        arr[1][i]=i;
+var superEggDrop = function(K, N) {
+  let arr = new Array(K + 1)
+  for (let i = 1; i <= N; i++) {
+    // 1个鸡蛋或者0个鸡蛋的值
+    if (!arr[0]) arr[0] = []
+    arr[0][i] = 0
+    if (!arr[1]) arr[1] = []
+    arr[1][i] = i
+  }
+  for (let i = 0; i <= K; i++) {
+    // 0层的值
+    if (!arr[i]) arr[i] = []
+    arr[i][0] = 0
+  }
+  for (let i = 2; i <= K; i++) {
+    for (let j = 1; j <= N; j++) {
+      // 计算j层的值
+      let minTimes = N * N // 储存的最小次数
+      for (let k = 1; k <= j; k++) {
+        // 计算j层中，每一层所需要扔的值
+        // 实际上这里就是把一栋楼拆分开来，每次都把分开的其中一栋楼计算次数
+        minTimes = Math.min(
+          minTimes,
+          1 + Math.max(arr[i - 1][k - 1], arr[i][j - k])
+        )
+      }
+      arr[i][j] = minTimes
     }
-    for(let i=0;i<=K;i++){ // 0层的值
-        if(!arr[i])arr[i]=[]
-        arr[i][0]=0;
-    }
-    for(let i=2;i<=K;i++){
-        for(let j=1;j<=N;j++){ // 计算j层的值
-            let minTimes = N*N; // 储存的最小次数
-            for(let k=1;k<=j;k++){ // 计算j层中，每一层所需要扔的值
-                // 实际上这里就是把一栋楼拆分开来，每次都把分开的其中一栋楼计算次数
-                minTimes = Math.min(minTimes,1+Math.max(arr[i-1][k-1],arr[i][j-k])) 
-            }
-            arr[i][j]=minTimes
-        }
-    }
-    return arr[K][N]
-
-};
+  }
+  return arr[K][N]
+}
 ```
 
-这个解法利用了一个二维数组存储了部分计算结果（空间复杂度O(KN)），使得时间复杂度降低到了O(KN^2)。但是依然是一个平方级别的时间复杂度，不够快，还能优化吗？
+这个解法利用了一个二维数组存储了部分计算结果（空间复杂度 O(KN)），使得时间复杂度降低到了 O(KN^2)。但是依然是一个平方级别的时间复杂度，不够快，还能优化吗？
 
 ##### 基于二分查找的动态规划法
 
-最开始的时候，我们就想到了二分查找，但是因为发现不对，就果断抛弃了，事实上它还是有利用价值的。在上一个O(KN^2)的算法中，我们拿着K个鸡蛋检查了每一个楼层来寻找F，但是事实上这并不是必须的，为什么呢？我们来看我们上面总结的这个递归的等式
+最开始的时候，我们就想到了二分查找，但是因为发现不对，就果断抛弃了，事实上它还是有利用价值的。在上一个 O(KN^2)的算法中，我们拿着 K 个鸡蛋检查了每一个楼层来寻找 F，但是事实上这并不是必须的，为什么呢？我们来看我们上面总结的这个递归的等式
 
 > searchTime(K, N) = max( searchTime(K-1, X-1), searchTime(K, N-X) )
 
-现在我们令T1 = searchTime(K-1, X-1)，T2 = searchTime(K, N-X)，其中，T1是随着X的增长而增长的，T2是随着X的增长而降低的，如下图
+现在我们令 T1 = searchTime(K-1, X-1)，T2 = searchTime(K, N-X)，其中，T1 是随着 X 的增长而增长的，T2 是随着 X 的增长而降低的，如下图
 
 ![image](https://user-images.githubusercontent.com/18693417/61040883-0f98b000-a404-11e9-9897-b07b923ad7a0.png)
 
-其中蓝色描出来的部分，就是searchTime(K, N)了，我们可以看出来它是局部有序的，所以可以考虑二分查找之！这里有一些与简单二分查找不一样的地方，就是在简单二分查找中，我们拿到输入数组A和它的下标low，high，mid之后，比较大小直接就是用下标读取数组的值A[low] < A[mid]，但是在我们这个二分查找中，这个值是需要依赖与本题逻辑相关的一些计算的，具体看代码
+其中蓝色描出来的部分，就是 searchTime(K, N)了，我们可以看出来它是局部有序的，所以可以考虑二分查找之！这里有一些与简单二分查找不一样的地方，就是在简单二分查找中，我们拿到输入数组 A 和它的下标 low，high，mid 之后，比较大小直接就是用下标读取数组的值 A[low] < A[mid]，但是在我们这个二分查找中，这个值是需要依赖与本题逻辑相关的一些计算的，具体看代码
 
 ```js
-let map={};
+let map = {}
 
-var superEggDrop = function (K, N) {
-    if(N<=1 || K===1)return N;
-    
-    const key = N * 1000 + K; // 对应K和N生成key
+var superEggDrop = function(K, N) {
+  if (N <= 1 || K === 1) return N
 
-    if(map[key])return map[key]
-    
-    let low = 2;
-    let high = N;
-    while(low+1<high){ // 一定会分割到 low 与 high 的距离小于1，也就是high-low<=1
-        const middle = parseInt((low+high)/2);
-        const lowVal = superEggDrop(K-1,middle-1);
-        const highVal = superEggDrop(K,N-middle);
-        
-        if(lowVal < highVal)low = middle;
-        else if(highVal < lowVal)high = middle;
-        else low = high = middle; // ******************
-    }
-    
-    
-    const min = 1+ Math.min(
-       // 这里相当于直接查表 from map,判断是低楼层的值大，还是高楼层的值大(因为已经分了)
-        Math.max(superEggDrop(K-1,low-1),superEggDrop(K,N - low)),
-         // 这里相当于直接查表 from map,这里获取到的值在上一层while循环中一定计算过了
-        Math.max(superEggDrop(K-1,high-1),superEggDrop(K,N-high))
-    );
-    
-    map[key]=min;
-    return min
-};
+  const key = N * 1000 + K // 对应K和N生成key
+
+  if (map[key]) return map[key]
+
+  let low = 2
+  let high = N
+  while (low + 1 < high) {
+    // 一定会分割到 low 与 high 的距离小于1，也就是high-low<=1
+    const middle = parseInt((low + high) / 2)
+    const lowVal = superEggDrop(K - 1, middle - 1)
+    const highVal = superEggDrop(K, N - middle)
+
+    if (lowVal < highVal) low = middle
+    else if (highVal < lowVal) high = middle
+    else low = high = middle // ******************
+  }
+
+  const min =
+    1 +
+    Math.min(
+      // 这里相当于直接查表 from map,判断是低楼层的值大，还是高楼层的值大(因为已经分了)
+      Math.max(superEggDrop(K - 1, low - 1), superEggDrop(K, N - low)),
+      // 这里相当于直接查表 from map,这里获取到的值在上一层while循环中一定计算过了
+      Math.max(superEggDrop(K - 1, high - 1), superEggDrop(K, N - high))
+    )
+
+  map[key] = min
+  return min
+}
 ```
 
-在while循环中，我们利用了上文中提到的T1和T2的单调性，计算出了它们内部分别的最大值，因为在while循环之后我们是要先取最大值，然后在众多的最大值中取最小值，所以while内部是通过二分查找的思想找到最大值。这个版本的空间复杂度依然是O(KN)，但是因为利用到了二分查找，所以其时间复杂度就降到了O(KNlogN)，这在很多的算法中，已经是一个可以接受的时间复杂度了，只是并不是最优雅的而已。
+在 while 循环中，我们利用了上文中提到的 T1 和 T2 的单调性，计算出了它们内部分别的最大值，因为在 while 循环之后我们是要先取最大值，然后在众多的最大值中取最小值，所以 while 内部是通过二分查找的思想找到最大值。这个版本的空间复杂度依然是 O(KN)，但是因为利用到了二分查找，所以其时间复杂度就降到了 O(KNlogN)，这在很多的算法中，已经是一个可以接受的时间复杂度了，只是并不是最优雅的而已。
 
 ### 2019.7.8
 
-#### 240. 搜索二维矩阵 II解析
+#### 240. 搜索二维矩阵 II 解析
 
-因为矩阵的行和列是排序的（分别从左到右和从上到下），所以在查看任何特定值时，我们可以修剪O(m)或O(n)元素。
+因为矩阵的行和列是排序的（分别从左到右和从上到下），所以在查看任何特定值时，我们可以修剪 O(m)或 O(n)元素。
 
 算法： 首先，我们初始化一个指向矩阵左下角的 (row，col) 指针。然后，直到找到目标并返回 true（或者指针指向矩阵维度之外的 (row，col) 为止，我们执行以下操作：如果当前指向的值大于目标值，则可以 “向上” 移动一行。 否则，如果当前指向的值小于目标值，则可以移动一列。不难理解为什么这样做永远不会删减正确的答案；因为行是从左到右排序的，所以我们知道当前值右侧的每个值都较大。 因此，如果当前值已经大于目标值，我们知道它右边的每个值会比较大。也可以对列进行非常类似的论证，因此这种搜索方式将始终在矩阵中找到目标（如果存在）。
 
 复杂度分析
 
-时间复杂度：O(n+m)。 时间复杂度分析的关键是注意到在每次迭代（我们不返回 true）时，行或列都会精确地递减/递增一次。由于行只能减少 m 次，而列只能增加  次，因此在导致 while 循环终止之前，循环不能运行超过 n+m 次。因为所有其他的工作都是常数，所以总的时间复杂度在矩阵维数之和中是线性的。
+时间复杂度：O(n+m)。 时间复杂度分析的关键是注意到在每次迭代（我们不返回 true）时，行或列都会精确地递减/递增一次。由于行只能减少 m 次，而列只能增加 次，因此在导致 while 循环终止之前，循环不能运行超过 n+m 次。因为所有其他的工作都是常数，所以总的时间复杂度在矩阵维数之和中是线性的。
 空间复杂度：O(1)，因为这种方法只处理几个指针，所以它的内存占用是恒定的。
-
 
 ### 2019.6.24
 
 #### 摩尔投票算法（结合 169. 求众数）
 
-Boyer–Moore majority vote algorithm，它以1981年出版的Robert S. Boyer和J Strother Moore命名，并且是流式算法的典型例子。
+Boyer–Moore majority vote algorithm，它以 1981 年出版的 Robert S. Boyer 和 J Strother Moore 命名，并且是流式算法的典型例子。
 
 转载自：如何理解摩尔投票算法？ - 喝七喜的回答 - 知乎
 https://www.zhihu.com/question/49973163/answer/235921864

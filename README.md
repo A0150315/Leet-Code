@@ -1,4 +1,79 @@
-### 2019.8.20(数据流的中位数)
+### 2019.9.3(有序矩阵中第K小的元素)
+
+给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第k小的元素。
+请注意，它是排序后的第k小元素，而不是第k个元素。
+
+**示例:**
+
+```
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+返回 13。
+```
+
+**说明**: 
+你可以假设 k 的值永远是有效的, 1 ≤ k ≤ n² 。
+
+> 我的答案
+
+```js
+...
+```
+
+> 优秀答案
+
+```js
+/**
+ * @param {number[][]} matrix
+ * @param {number} k
+ * @return {number}
+ */
+var kthSmallest = function (matrix, k) {
+
+    if (matrix.length === 1) return matrix[0][0];
+
+    let len = matrix.length;
+    let min = matrix[0][0];
+    let max = matrix[len - 1][len - 1];
+
+    while (min <= max) {
+        let mid = (max + min) >> 1;// 右移一位，即取平均数
+        let count = getCountLessThan(matrix, mid);
+        
+        count < k ? min = mid + 1 : max = mid - 1;
+        console.log(min, mid, max, count, k)
+    }
+
+    return min;
+};
+
+/**在题中的矩阵中找到所有比target小的数的数量
+ *
+ * @param matrix
+ * @param target
+ * @returns {number}
+ */
+function getCountLessThan (matrix, target) {
+    let count = 0;
+    let len = matrix.length;
+    let x = len - 1;
+    let y = 0;
+
+    while (x >= 0 && y < len) {
+        //找到当前列第一个大于target的数的index
+        matrix[x][y] > target ? x-- : (count += x + 1, y++);
+    }
+
+    return count;
+}
+```
+
+### 2019.8.28(数据流的中位数)
 
 中位数是有序列表中间的数。如果列表长度是偶数，中位数则是中间两个数的平均值。
 

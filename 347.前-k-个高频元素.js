@@ -9,33 +9,42 @@
  * @return {number[]}
  */
 var topKFrequent = function (nums, k) {
-
-    let minTime = Number.MAX_SAFE_INTEGER;
-    const map = {};
-    let result = [];
-    let times = []
-
-    nums.forEach(num => {
-        if (!map[num]) map[num] = 1;
-        else map[num]++
+    if (k === nums.length) return nums
+    let map = new Map()
+    let arr = [] // 次数记录的数组
+    let res = [];
+    nums.forEach(n => {
+        map.set(n, (map.get(n) || 0) + 1)
     })
-
-
-    for (let [num, time] of Object.entries(map)) {
-        num = +num
-        if (times.length < k) {
-            times.push(time);
-            result.push(num);
-            if (time < minTime) minTime = time;
-        }
-        else {
-            if (Math.min.apply(null, times) <= time) {
-                const minIndex = times.indexOf(Math.min.apply(null, times))
-                times[minIndex] = time;
-                result[minIndex] = num
+    for (let [k, v] of map) {
+        if (arr[v] !== undefined) {
+            if (arr[v] instanceof Array) {
+                arr[v].push(k)
+            } else {
+                arr[v] = [arr[v], k]
             }
+        } else {
+            arr[v] = k
         }
     }
 
-    return result
+    console.log('map', map)
+    console.log('arr', arr)
+
+    let i = arr.length - 1
+    while (k > 0) {
+        if (arr[i] !== undefined) {
+            if (arr[i] instanceof Array) {
+                res.push(...arr[i].slice(0, k))
+                k -= arr[i].length
+            } else {
+                res.push(arr[i])
+                k--
+            }
+        }
+        i--
+    }
+    return res
 };
+
+topKFrequent([1, 1, 1, 2, 2, 3], 2)

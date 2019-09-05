@@ -1,7 +1,102 @@
-### 2019.9.3(有序矩阵中第K小的元素)
+### 2019.9.5(前 K 个高频元素)
 
-给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第k小的元素。
-请注意，它是排序后的第k小元素，而不是第k个元素。
+给定一个非空的整数数组，返回其中出现频率前 k 高的元素。
+
+**示例 1:**
+
+```
+输入: nums = [1,1,1,2,2,3], k = 2
+输出: [1,2]
+```
+
+**示例 2:**
+
+```
+输入: nums = [1], k = 1
+输出: [1]
+```
+
+**说明**:
+
+- 你可以假设给定的 k 总是合理的，且 1 ≤ k ≤ 数组中不相同的元素的个数。
+- 你的算法的时间复杂度必须优于 O(n log n) , n 是数组的大小。
+
+> 我的答案
+
+```js
+var topKFrequent = function(nums, k) {
+  let minTime = Number.MAX_SAFE_INTEGER
+  const map = {}
+  let result = []
+  let times = []
+
+  nums.forEach(num => {
+    if (!map[num]) map[num] = 1
+    else map[num]++
+  })
+
+  for (let [num, time] of Object.entries(map)) {
+    num = +num
+    if (times.length < k) {
+      times.push(time)
+      result.push(num)
+      if (time < minTime) minTime = time
+    } else {
+      if (Math.min.apply(null, times) <= time) {
+        const minIndex = times.indexOf(Math.min.apply(null, times))
+        times[minIndex] = time
+        result[minIndex] = num
+      }
+    }
+  }
+
+  return result
+}
+```
+
+> 优秀答案
+
+```js
+var topKFrequent = function(nums, k) {
+  if (k === nums.length) return nums
+  let map = new Map()
+  let arr = []
+  let res = []
+  nums.forEach(n => {
+    map.set(n, (map.get(n) || 0) + 1)
+  })
+  for (let [k, v] of map) {
+    if (arr[v] !== undefined) {
+      if (arr[v] instanceof Array) {
+        arr[v].push(k)
+      } else {
+        arr[v] = [arr[v], k]
+      }
+    } else {
+      arr[v] = k
+    }
+  }
+  let i = arr.length - 1
+  while (k > 0) {
+    if (arr[i] !== undefined) {
+      if (arr[i] instanceof Array) {
+        res.push(...arr[i].slice(0, k))
+        k -= arr[i].length
+      } else {
+        res.push(arr[i])
+        k--
+      }
+    }
+    i--
+  }
+  return res
+}
+```
+
+### 2019.9.3(有序矩阵中第 K 小的元素)
+
+给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。
+请注意，它是排序后的第 k 小元素，而不是第 k 个元素。
 
 **示例:**
 
@@ -16,7 +111,7 @@ k = 8,
 返回 13。
 ```
 
-**说明**: 
+**说明**:
 你可以假设 k 的值永远是有效的, 1 ≤ k ≤ n² 。
 
 > 我的答案
@@ -33,24 +128,23 @@ k = 8,
  * @param {number} k
  * @return {number}
  */
-var kthSmallest = function (matrix, k) {
+var kthSmallest = function(matrix, k) {
+  if (matrix.length === 1) return matrix[0][0]
 
-    if (matrix.length === 1) return matrix[0][0];
+  let len = matrix.length
+  let min = matrix[0][0]
+  let max = matrix[len - 1][len - 1]
 
-    let len = matrix.length;
-    let min = matrix[0][0];
-    let max = matrix[len - 1][len - 1];
+  while (min <= max) {
+    let mid = (max + min) >> 1 // 右移一位，即取平均数
+    let count = getCountLessThan(matrix, mid)
 
-    while (min <= max) {
-        let mid = (max + min) >> 1;// 右移一位，即取平均数
-        let count = getCountLessThan(matrix, mid);
-        
-        count < k ? min = mid + 1 : max = mid - 1;
-        console.log(min, mid, max, count, k)
-    }
+    count < k ? (min = mid + 1) : (max = mid - 1)
+    console.log(min, mid, max, count, k)
+  }
 
-    return min;
-};
+  return min
+}
 
 /**在题中的矩阵中找到所有比target小的数的数量
  *
@@ -58,18 +152,18 @@ var kthSmallest = function (matrix, k) {
  * @param target
  * @returns {number}
  */
-function getCountLessThan (matrix, target) {
-    let count = 0;
-    let len = matrix.length;
-    let x = len - 1;
-    let y = 0;
+function getCountLessThan(matrix, target) {
+  let count = 0
+  let len = matrix.length
+  let x = len - 1
+  let y = 0
 
-    while (x >= 0 && y < len) {
-        //找到当前列第一个大于target的数的index
-        matrix[x][y] > target ? x-- : (count += x + 1, y++);
-    }
+  while (x >= 0 && y < len) {
+    //找到当前列第一个大于target的数的index
+    matrix[x][y] > target ? x-- : ((count += x + 1), y++)
+  }
 
-    return count;
+  return count
 }
 ```
 

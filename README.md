@@ -1,3 +1,79 @@
+### 2019.9.6(滑动窗口最大值)
+
+给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+**示例:**
+
+```
+输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
+输出: [3,3,5,5,6,7] 
+解释: 
+
+  滑动窗口的位置                最大值
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+```
+
+**提示**:
+
+你可以假设 k 总是有效的，在输入数组不为空的情况下，1 ≤ k ≤ 输入数组的大小。
+
+**进阶**:
+
+你能在线性时间复杂度内解决此题吗？
+
+> 我的答案
+
+```js
+var maxSlidingWindow = function (nums, k) {
+    if (k === 0 || nums.length === 0) return []
+    let start = 0;
+    let res = []
+    while (start + k <= nums.length) {
+        res.push(Math.max.apply(null, nums.slice(start, start + k)))
+        start++
+    }
+    return res
+};
+```
+
+> 优秀答案
+
+```js
+var maxSlidingWindow = function(nums, k) {
+   // 双端队列优化时间复杂度, 时间复杂度O(n)
+    const deque = []; // 存放在接下来的滑动窗口可能成为最大值的数
+    const ret = [];   
+    const len = nums.length
+    for (let i = 0; i < len; i++) {
+        // 清空失效元素
+        // 如果 deque[0] 小于 当前 i 减去 固定的 k + 1  就数组前两个删除
+        while (deque[0] < i - k + 1) {
+            deque.shift();
+        }
+        // 如果原数组 的deque最大位置 小于当前循环数 则删除末尾
+        // 第二次循环 因为上一个循环 push deque中的为 0 所以 会 进入循环
+        // 知道循环三次后找打最大的 才会再次进入循环d
+        while (nums[deque[deque.length - 1]] < nums[i]) {
+            deque.pop();
+        }
+        deque.push(i);  // 将当前下标添加到 deque
+        if (i >= k - 1) {
+            // 因为 如果
+            ret.push(nums[deque[0]]);
+        }
+    }
+    return ret;
+};
+```
+
 ### 2019.9.5(前 K 个高频元素)
 
 给定一个非空的整数数组，返回其中出现频率前 k 高的元素。

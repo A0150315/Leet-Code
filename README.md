@@ -1,3 +1,107 @@
+### 2019.9.19(基本计算器 II)
+
+实现一个基本的计算器来计算一个简单的字符串表达式的值。
+
+字符串表达式仅包含非负整数，+， - ，*，/ 四种运算符和空格  。 整数除法仅保留整数部分。
+
+**示例 1:**
+
+```
+输入: "3+2*2"
+输出: 7
+```
+
+**示例 2:**
+
+```
+输入: " 3/2 "
+输出: 1
+```
+
+**示例 3:**
+
+```
+输入: " 3+5 / 2 "
+输出: 5
+```
+
+**说明**:
+
+- 你可以假设所给定的表达式都是有效的。
+- 请不要使用内置的库函数 eval。
+
+> 我的答案
+
+```js
+var calculate = function(s) {
+  s = s.replace(/\s/g, '')
+  while (/\*|\//.test(s)) {
+    s = s.replace(/(\d+)(\*|\/)(\d+)/, operatorHandler)
+  }
+  while (/\+|\-/.test(s) && /\d+[\+\-]/.test(s)) {
+    s = s.replace(/([\-]*\d+)(\+|\-)(\d+)/, operatorHandler)
+  }
+  return s
+}
+
+const operatorHandler = (_, firstNum, operator, secondNum) => {
+  switch (operator) {
+    case '/':
+      return parseInt(+firstNum / +secondNum)
+    case '*':
+      return +firstNum * +secondNum
+    case '+':
+      return +firstNum + +secondNum
+    case '-':
+      return +firstNum - +secondNum
+  }
+}
+```
+
+> 优秀答案
+
+```js
+const calculate = (s) => {
+  
+  // 将字符串切割成如 ["23", "+", "4", "+", "5", "/", "3"]，顺便处理掉空格
+  const newStr = s.match(/(\d{1,}|[+\-\*\/])/g);
+  console.log(newStr)
+  const length = newStr.length;
+  
+  let result = 0;
+  let num = undefined; // 临时存储乘除的，需区分0
+  
+  for (let i = 0; i < length; i += 2) {
+    const operator = newStr[i+1]; // 下一个运算符
+    const val = Number(newStr[i]);
+    
+    if (num !== undefined) num = parseInt(num * val, 10);
+    
+    switch (operator) {
+      case '-':
+        newStr[i+2] *= -1; // 减法转加法
+      case '+':
+        if (num !== undefined) {
+          result += num;
+          num = undefined;
+        } else {
+          result += val;
+        }
+        break;
+      case '/':
+        newStr[i+2] = 1 / newStr[i+2]; // 除法转乘法
+      case '*':
+        if (num === undefined) num = val;
+        break;
+      default:
+        // 最后的字符
+        result += num !== undefined ? num : val;
+    }
+  }
+  return result;
+};
+```
+
 ### 2019.9.6(滑动窗口最大值)
 
 给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。

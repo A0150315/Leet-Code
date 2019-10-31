@@ -1,10 +1,76 @@
+### 2019.10.31(复制带随机指针的链表)
+
+给定一个链表，每个节点包含一个额外增加的随机指针，该指针可以指向链表中的任何节点或空节点。
+
+要求返回这个链表的深拷贝。
+
+**示例：**
+![image](https://user-images.githubusercontent.com/18693417/67914708-dad78100-fbcb-11e9-92d9-c9f309c6ae1f.png)
+
+```
+输入：
+{"$id":"1","next":{"$id":"2","next":null,"random":{"$ref":"2"},"val":2},"random":{"$ref":"2"},"val":1}
+
+解释：
+节点 1 的值是 1，它的下一个指针和随机指针都指向节点 2 。
+节点 2 的值是 2，它的下一个指针指向 null，随机指针指向它自己。
+```
+
+提示：
+
+1. 你必须返回给定头的拷贝作为对克隆列表的引用。
+
+> 我的答案
+
+```js
+/**
+ * @param {Node} head
+ * @return {Node}
+ */
+
+const hashMap = new Map()
+
+const copyRandomList = head => {
+  if (!head) return null
+  if (hashMap.has(head)) return hashMap.get(head)
+
+  const copyNode = new Node(head.val)
+
+  hashMap.set(head, copyNode)
+
+  copyNode.next = copyRandomList(head.next)
+  copyNode.random = copyRandomList(head.random)
+
+  return copyNode
+}
+```
+
+> 优秀答案
+
+```js
+/**
+ * 递归法
+ */
+var copyRandomList = function(node, mapping = new WeakMap()) {
+  if (!node) return node // NULL结点
+  if (mapping.has(node)) return mapping.get(node) // 取缓存
+
+  const newNode = new Node(node.val)
+  mapping.set(node, newNode) // 记录映射：旧结点 => 新结点
+  newNode.next = copyRandomList(node.next, mapping)
+  newNode.random = copyRandomList(node.random, mapping)
+  return newNode
+}
+```
+
 ### 2019.9.26(逆波兰表达式求值)
 
 根据逆波兰表示法，求表达式的值。
 
-有效的运算符包括 +, -, *, / 。每个运算对象可以是整数，也可以是另一个逆波兰表达式。
+有效的运算符包括 +, -, \*, / 。每个运算对象可以是整数，也可以是另一个逆波兰表达式。
 
 **说明:**
+
 - 整数除法只保留整数部分。
 - 给定逆波兰表达式总是有效的。换句话说，表达式总会得出有效数值且不存在除数为 0 的情况。
 
@@ -29,7 +95,7 @@
 ```
 输入: ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
 输出: 22
-解释: 
+解释:
   ((10 * (6 / ((9 + 3) * -11))) + 17) + 5
 = ((10 * (6 / (12 * -11))) + 17) + 5
 = ((10 * (6 / -132)) + 17) + 5
@@ -74,34 +140,34 @@ function calc(num1, num2, op) {
  * @return {number}
  */
 function getOperand(arr) {
-    let op2 = arr.pop()
-    let op1 = arr.pop()
-    return [op1, op2]
+  let op2 = arr.pop()
+  let op1 = arr.pop()
+  return [op1, op2]
 }
 const calculator = {
-    '+': (a, b) => a + b,
-    '-': (a, b) => a - b,
-    '*': (a, b) => a * b,
-    '/': (a, b) => Math.trunc(a / b),
+  '+': (a, b) => a + b,
+  '-': (a, b) => a - b,
+  '*': (a, b) => a * b,
+  '/': (a, b) => Math.trunc(a / b)
 }
 var evalRPN = function(tokens) {
-    let stack = []
-    while (tokens.length) {
-        let next = tokens.shift()
-        switch(next) {
-            case '+':
-            case '-':
-            case '*':
-            case '/':
-                let [op1, op2] = getOperand(stack)
-                stack.push(calculator[next](Number(op1), Number(op2)))
-                break
-            default:
-                stack.push(next)
-        }
+  let stack = []
+  while (tokens.length) {
+    let next = tokens.shift()
+    switch (next) {
+      case '+':
+      case '-':
+      case '*':
+      case '/':
+        let [op1, op2] = getOperand(stack)
+        stack.push(calculator[next](Number(op1), Number(op2)))
+        break
+      default:
+        stack.push(next)
     }
-    return stack[0]
-};
+  }
+  return stack[0]
+}
 ```
 
 ### 2019.9.24(扁平化嵌套列表迭代器)
@@ -197,41 +263,39 @@ function deconstruction(array, temp = []) {
 
 ```js
 var NestedIterator = function(nestedList) {
-    this.list = nestedList
-};
-
+  this.list = nestedList
+}
 
 /**
  * @this NestedIterator
  * @returns {boolean}
  */
 NestedIterator.prototype.hasNext = function() {
-    while (this.list.length != 0){
-        if (this.list[0].isInteger()){
-            return true
-        }else {
-            let cur = this.list[0].getList()
-            this.list.shift()
-            this.list.unshift(...cur)
-        }
+  while (this.list.length != 0) {
+    if (this.list[0].isInteger()) {
+      return true
+    } else {
+      let cur = this.list[0].getList()
+      this.list.shift()
+      this.list.unshift(...cur)
     }
-    
-};
+  }
+}
 
 /**
  * @this NestedIterator
  * @returns {integer}
  */
 NestedIterator.prototype.next = function() {
-    return this.list.shift().getInteger()
-};
+  return this.list.shift().getInteger()
+}
 ```
 
 ### 2019.9.19(基本计算器 II)
 
 实现一个基本的计算器来计算一个简单的字符串表达式的值。
 
-字符串表达式仅包含非负整数，+， - ，*，/ 四种运算符和空格  。 整数除法仅保留整数部分。
+字符串表达式仅包含非负整数，+， - ，\*，/ 四种运算符和空格 。 整数除法仅保留整数部分。
 
 **示例 1:**
 
@@ -290,45 +354,44 @@ const operatorHandler = (_, firstNum, operator, secondNum) => {
 > 优秀答案
 
 ```js
-const calculate = (s) => {
-  
+const calculate = s => {
   // 将字符串切割成如 ["23", "+", "4", "+", "5", "/", "3"]，顺便处理掉空格
-  const newStr = s.match(/(\d{1,}|[+\-\*\/])/g);
+  const newStr = s.match(/(\d{1,}|[+\-\*\/])/g)
   console.log(newStr)
-  const length = newStr.length;
-  
-  let result = 0;
-  let num = undefined; // 临时存储乘除的，需区分0
-  
+  const length = newStr.length
+
+  let result = 0
+  let num = undefined // 临时存储乘除的，需区分0
+
   for (let i = 0; i < length; i += 2) {
-    const operator = newStr[i+1]; // 下一个运算符
-    const val = Number(newStr[i]);
-    
-    if (num !== undefined) num = parseInt(num * val, 10);
-    
+    const operator = newStr[i + 1] // 下一个运算符
+    const val = Number(newStr[i])
+
+    if (num !== undefined) num = parseInt(num * val, 10)
+
     switch (operator) {
       case '-':
-        newStr[i+2] *= -1; // 减法转加法
+        newStr[i + 2] *= -1 // 减法转加法
       case '+':
         if (num !== undefined) {
-          result += num;
-          num = undefined;
+          result += num
+          num = undefined
         } else {
-          result += val;
+          result += val
         }
-        break;
+        break
       case '/':
-        newStr[i+2] = 1 / newStr[i+2]; // 除法转乘法
+        newStr[i + 2] = 1 / newStr[i + 2] // 除法转乘法
       case '*':
-        if (num === undefined) num = val;
-        break;
+        if (num === undefined) num = val
+        break
       default:
         // 最后的字符
-        result += num !== undefined ? num : val;
+        result += num !== undefined ? num : val
     }
   }
-  return result;
-};
+  return result
+}
 ```
 
 ### 2019.9.6(滑动窗口最大值)
@@ -341,8 +404,8 @@ const calculate = (s) => {
 
 ```
 输入: nums = [1,3,-1,-3,5,3,6,7], 和 k = 3
-输出: [3,3,5,5,6,7] 
-解释: 
+输出: [3,3,5,5,6,7]
+解释:
 
   滑动窗口的位置                最大值
 ---------------               -----
@@ -365,46 +428,46 @@ const calculate = (s) => {
 > 我的答案
 
 ```js
-var maxSlidingWindow = function (nums, k) {
-    if (k === 0 || nums.length === 0) return []
-    let start = 0;
-    let res = []
-    while (start + k <= nums.length) {
-        res.push(Math.max.apply(null, nums.slice(start, start + k)))
-        start++
-    }
-    return res
-};
+var maxSlidingWindow = function(nums, k) {
+  if (k === 0 || nums.length === 0) return []
+  let start = 0
+  let res = []
+  while (start + k <= nums.length) {
+    res.push(Math.max.apply(null, nums.slice(start, start + k)))
+    start++
+  }
+  return res
+}
 ```
 
 > 优秀答案
 
 ```js
 var maxSlidingWindow = function(nums, k) {
-   // 双端队列优化时间复杂度, 时间复杂度O(n)
-    const deque = []; // 存放在接下来的滑动窗口可能成为最大值的数
-    const ret = [];   
-    const len = nums.length
-    for (let i = 0; i < len; i++) {
-        // 清空失效元素
-        // 如果 deque[0] 小于 当前 i 减去 固定的 k + 1  就数组前两个删除
-        while (deque[0] < i - k + 1) {
-            deque.shift();
-        }
-        // 如果原数组 的deque最大位置 小于当前循环数 则删除末尾
-        // 第二次循环 因为上一个循环 push deque中的为 0 所以 会 进入循环
-        // 知道循环三次后找打最大的 才会再次进入循环d
-        while (nums[deque[deque.length - 1]] < nums[i]) {
-            deque.pop();
-        }
-        deque.push(i);  // 将当前下标添加到 deque
-        if (i >= k - 1) {
-            // 因为 如果
-            ret.push(nums[deque[0]]);
-        }
+  // 双端队列优化时间复杂度, 时间复杂度O(n)
+  const deque = [] // 存放在接下来的滑动窗口可能成为最大值的数
+  const ret = []
+  const len = nums.length
+  for (let i = 0; i < len; i++) {
+    // 清空失效元素
+    // 如果 deque[0] 小于 当前 i 减去 固定的 k + 1  就数组前两个删除
+    while (deque[0] < i - k + 1) {
+      deque.shift()
     }
-    return ret;
-};
+    // 如果原数组 的deque最大位置 小于当前循环数 则删除末尾
+    // 第二次循环 因为上一个循环 push deque中的为 0 所以 会 进入循环
+    // 知道循环三次后找打最大的 才会再次进入循环d
+    while (nums[deque[deque.length - 1]] < nums[i]) {
+      deque.pop()
+    }
+    deque.push(i) // 将当前下标添加到 deque
+    if (i >= k - 1) {
+      // 因为 如果
+      ret.push(nums[deque[0]])
+    }
+  }
+  return ret
+}
 ```
 
 ### 2019.9.5(前 K 个高频元素)
